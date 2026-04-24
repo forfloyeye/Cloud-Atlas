@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云图 Cloud Atlas Demo</title>
+  <style>
+    :root {
+      --bg-0: #07111f;
+      --bg-1: #0b1730;
+      --bg-2: #142449;
+      --text: #eef4ff;
+      --muted: rgba(219, 233, 255, 0.68);
+      --line: rgba(170, 196, 255, 0.14);
+      --panel: rgba(8, 15, 31, 0.54);
+      --panel-strong: rgba(7, 14, 28, 0.78);
+      --cyan: #86e7ff;
+      --gold: #ffd17d;
+      --rose: #ff9dcc;
+      --mint: #9ce7cb;
+      --orange: #ffb48a;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+      --radius-lg: 28px;
+      --radius-md: 20px;
+      --radius-sm: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(50, 96, 182, 0.28), transparent 30%),
+        radial-gradient(circle at 82% 22%, rgba(255, 176, 112, 0.15), transparent 24%),
+        radial-gradient(circle at 52% 72%, rgba(107, 195, 255, 0.18), transparent 28%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 45%, #050b18 100%);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 120px 120px;
+      mask-image: radial-gradient(circle at center, black 40%, transparent 88%);
+      opacity: 0.4;
+    }
+
+    body::after {
+      background:
+        radial-gradient(circle at center, transparent 52%, rgba(0, 0, 0, 0.54) 100%);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .app {
+      position: relative;
+      min-height: 100vh;
+      padding: 24px;
+      isolation: isolate;
+    }
+
+    #starfield {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .mist {
+      position: absolute;
+      inset: 3% 6% 6%;
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(255, 248, 223, 0.16), transparent 16%),
+        radial-gradient(ellipse at 46% 48%, rgba(141, 221, 255, 0.17), transparent 24%),
+        radial-gradient(ellipse at 39% 53%, rgba(143, 112, 255, 0.13), transparent 18%),
+        radial-gradient(ellipse at 60% 46%, rgba(255, 190, 117, 0.13), transparent 19%),
+        radial-gradient(ellipse at 72% 54%, rgba(138, 239, 218, 0.1), transparent 17%);
+      filter: blur(46px);
+      opacity: 0.98;
+      transform: rotate(-10deg) scale(1.08, 0.72);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 8px 10px 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.98), rgba(137, 224, 255, 0.86) 28%, rgba(35, 120, 255, 0.12) 60%, transparent 72%),
+        radial-gradient(circle at 64% 55%, rgba(255, 204, 138, 0.42), transparent 55%),
+        #09172c;
+      box-shadow: 0 0 24px rgba(134, 231, 255, 0.34);
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 17px;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+
+    .brand-copy span {
+      display: block;
+      margin-top: 3px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ghost,
+    .primary,
+    .secondary {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 999px;
+      padding: 11px 16px;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+    }
+
+    .ghost:hover,
+    .primary:hover,
+    .secondary:hover {
+      transform: translateY(-1px);
+      border-color: rgba(172, 214, 255, 0.36);
+    }
+
+    .primary {
+      background: linear-gradient(135deg, rgba(110, 230, 255, 0.22), rgba(115, 136, 255, 0.22));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    }
+
+    .layout {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr) minmax(280px, 340px);
+      gap: 18px;
+      height: calc(100vh - 104px);
+    }
+
+    .panel {
+      position: relative;
+      background: linear-gradient(180deg, rgba(11, 20, 41, 0.7), rgba(7, 13, 27, 0.48));
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 30%);
+      pointer-events: none;
+    }
+
+    .intro {
+      padding: 28px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(161, 209, 255, 0.18);
+      background: rgba(125, 180, 255, 0.08);
+      font-size: 12px;
+      color: #d7ecff;
+    }
+
+    .intro h1 {
+      margin: 0;
+      font-size: clamp(34px, 4vw, 58px);
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+    }
+
+    .intro h1 span {
+      display: block;
+      color: rgba(255, 255, 255, 0.62);
+      font-weight: 500;
+    }
+
+    .intro p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .intro-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(176, 205, 255, 0.08);
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .stat-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .cluster-stage {
+      position: relative;
+      border-radius: 34px;
+      min-height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 247, 216, 0.14), transparent 10%),
+        radial-gradient(ellipse at 50% 51%, rgba(161, 224, 255, 0.14), transparent 22%),
+        radial-gradient(ellipse at 42% 52%, rgba(168, 132, 255, 0.12), transparent 16%),
+        radial-gradient(ellipse at 60% 47%, rgba(255, 190, 117, 0.12), transparent 18%),
+        linear-gradient(180deg, rgba(11, 18, 37, 0.52), rgba(3, 7, 16, 0.3));
+      border: 1px solid rgba(167, 199, 255, 0.14);
+      box-shadow: var(--shadow);
+    }
+
+    .cluster-stage::before {
+      content: "";
+      position: absolute;
+      inset: 18% 8%;
+      background:
+        radial-gradient(ellipse at center, rgba(255, 252, 240, 0.16), transparent 14%),
+        radial-gradient(ellipse at center, rgba(137, 199, 255, 0.14), transparent 38%),
+        radial-gradient(ellipse at 35% 54%, rgba(150, 114, 255, 0.12), transparent 20%),
+        radial-gradient(ellipse at 68% 44%, rgba(255, 181, 109, 0.12), transparent 20%);
+      filter: blur(18px);
+      pointer-events: none;
+    }
+
+    .cluster-stage::after {
+      content: "";
+      position: absolute;
+      inset: 8% 4%;
+      background:
+        radial-gradient(ellipse at 26% 62%, rgba(118, 211, 255, 0.08), transparent 14%),
+        radial-gradient(ellipse at 42% 44%, rgba(255, 255, 255, 0.09), transparent 11%),
+        radial-gradient(ellipse at 58% 56%, rgba(255, 208, 142, 0.08), transparent 14%),
+        radial-gradient(ellipse at 77% 40%, rgba(124, 167, 255, 0.08), transparent 13%);
+      filter: blur(24px);
+      pointer-events: none;
+      transform: rotate(-12deg);
+      z-index: 1;
+    }
+
+    .cluster-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    .dust-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: screen;
+    }
+
+    .dust {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.96), var(--dust-color, rgba(173, 218, 255, 0.84)) 70%, transparent 100%);
+      opacity: 0.2;
+      filter: blur(0.25px);
+      animation: pulse 5.8s ease-in-out infinite;
+    }
+
+    .dust.core {
+      box-shadow: 0 0 12px rgba(255, 246, 201, 0.36);
+    }
+
+    .dust.arm {
+      box-shadow: 0 0 9px color-mix(in srgb, var(--dust-color, #86e7ff) 42%, transparent);
+    }
+
+    .dust.far {
+      box-shadow: 0 0 6px rgba(152, 191, 255, 0.12);
+    }
+
+    .haze-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .haze {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(28px);
+      opacity: 0.72;
+      mix-blend-mode: screen;
+    }
+
+    .haze-a {
+      left: 18%;
+      top: 43%;
+      width: 30%;
+      height: 12%;
+      background: radial-gradient(ellipse at center, rgba(121, 213, 255, 0.22), transparent 70%);
+      transform: rotate(-18deg);
+    }
+
+    .haze-b {
+      left: 37%;
+      top: 38%;
+      width: 28%;
+      height: 11%;
+      background: radial-gradient(ellipse at center, rgba(255, 247, 215, 0.24), transparent 72%);
+      transform: rotate(6deg);
+    }
+
+    .haze-c {
+      left: 55%;
+      top: 47%;
+      width: 28%;
+      height: 12%;
+      background: radial-gradient(ellipse at center, rgba(255, 188, 118, 0.18), transparent 70%);
+      transform: rotate(21deg);
+    }
+
+    .orbit-ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border-radius: 50%;
+      border: 1px solid rgba(174, 205, 255, 0.08);
+      transform: translate(-50%, -50%) rotate(-8deg);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .orbit-ring.r1 {
+      width: 36%;
+      height: 22%;
+    }
+
+    .orbit-ring.r2 {
+      width: 56%;
+      height: 34%;
+      transform: translate(-50%, -50%) rotate(14deg);
+    }
+
+    .orbit-ring.r3 {
+      width: 78%;
+      height: 46%;
+      transform: translate(-50%, -50%) rotate(-16deg);
+    }
+
+    .system {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      margin: -12px 0 0 -12px;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      z-index: 3;
+      transition: transform 220ms ease;
+    }
+
+    .system::before,
+    .system::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      transition: transform 220ms ease, opacity 220ms ease, box-shadow 220ms ease;
+    }
+
+    .system::before {
+      width: 7px;
+      height: 7px;
+      background: radial-gradient(circle at 35% 35%, #fff, currentColor 68%, transparent 100%);
+      box-shadow: 0 0 16px currentColor;
+      color: var(--cyan);
+    }
+
+    .system::after {
+      width: 24px;
+      height: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      opacity: 0;
+    }
+
+    .system:hover,
+    .system:focus-visible,
+    .system.active {
+      transform: scale(1.16);
+      outline: none;
+    }
+
+    .system:hover::before,
+    .system:focus-visible::before,
+    .system.active::before {
+      transform: translate(-50%, -50%) scale(1.3);
+      box-shadow: 0 0 22px currentColor, 0 0 42px color-mix(in srgb, currentColor 48%, transparent);
+    }
+
+    .system:hover::after,
+    .system:focus-visible::after,
+    .system.active::after {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.18);
+    }
+
+    .system.explored::before {
+      width: 9px;
+      height: 9px;
+    }
+
+    .system.locked::before {
+      color: rgba(188, 214, 255, 0.88);
+      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.92), rgba(135, 180, 255, 0.72) 68%, transparent 100%);
+    }
+
+    .system.locked::after {
+      border-style: dashed;
+    }
+
+    .system.unlocked::before {
+      box-shadow: 0 0 18px currentColor, 0 0 42px color-mix(in srgb, currentColor 56%, transparent);
+    }
+
+    .cluster-stage .legend {
+      position: absolute;
+      left: 22px;
+      bottom: 18px;
+      z-index: 4;
+      display: flex;
+      gap: 16px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(7, 14, 27, 0.54);
+      border: 1px solid rgba(154, 194, 255, 0.12);
+      backdrop-filter: blur(14px);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 12px currentColor;
+    }
+
+    .info-panel {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .panel-title h2,
+    .panel-title h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .panel-badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #dceeff;
+      background: rgba(108, 173, 255, 0.12);
+      border: 1px solid rgba(164, 201, 255, 0.16);
+    }
+
+    .selected-title {
+      margin: 0;
+      font-size: clamp(22px, 2.8vw, 34px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .selected-subtitle,
+    .muted {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(160, 197, 255, 0.08);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .progress-block {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(160, 197, 255, 0.08);
+    }
+
+    .progress-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .progress-track {
+      position: relative;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--gold));
+      transition: width 280ms ease;
+      box-shadow: 0 0 18px rgba(134, 231, 255, 0.34);
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(168, 205, 255, 0.12);
+      color: #d8ecff;
+    }
+
+    .snapshot {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(160, 197, 255, 0.08);
+    }
+
+    .snapshot strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .snapshot p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+
+    .quick-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .quick-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(160, 197, 255, 0.07);
+    }
+
+    .quick-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 14px currentColor;
+    }
+
+    .quick-copy strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .quick-copy span,
+    .quick-item em {
+      color: var(--muted);
+      font-size: 12px;
+      font-style: normal;
+    }
+
+    .tooltip {
+      position: fixed;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, calc(-100% - 16px));
+      min-width: 220px;
+      max-width: 260px;
+      padding: 14px 14px 13px;
+      border-radius: 18px;
+      background: rgba(9, 16, 30, 0.88);
+      border: 1px solid rgba(169, 203, 255, 0.16);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      z-index: 30;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 140ms ease;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    .tooltip strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .tooltip span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 26px;
+      background: rgba(2, 5, 12, 0.5);
+      backdrop-filter: blur(16px);
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    .modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      position: relative;
+      width: min(760px, 100%);
+      border-radius: 34px;
+      padding: 28px;
+      background:
+        radial-gradient(circle at top right, rgba(125, 207, 255, 0.16), transparent 22%),
+        linear-gradient(180deg, rgba(13, 20, 40, 0.94), rgba(7, 12, 23, 0.94));
+      border: 1px solid rgba(173, 208, 255, 0.14);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .modal-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 28%);
+      pointer-events: none;
+    }
+
+    .modal-close {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(178, 205, 255, 0.16);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-right: 52px;
+    }
+
+    .modal-header h3 {
+      margin: 10px 0 8px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+
+    .modal-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .modal-meta span {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #dceeff;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(164, 202, 255, 0.12);
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .modal-section {
+      padding: 18px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(164, 202, 255, 0.08);
+    }
+
+    .modal-section h4 {
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    .modal-section p,
+    .modal-section li {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .modal-section ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .secondary {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 50;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(7, 14, 28, 0.9);
+      border: 1px solid rgba(165, 202, 255, 0.12);
+      color: #e8f3ff;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.16; transform: scale(1); }
+      50% { opacity: 0.42; transform: scale(1.45); }
+    }
+
+    @media (max-width: 1180px) {
+      body {
+        overflow: auto;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .cluster-stage {
+        min-height: 58vh;
+        order: -1;
+      }
+
+      .info-panel {
+        order: 2;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        padding: 16px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .top-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .intro h1 {
+        font-size: 36px;
+      }
+
+      .metric-row,
+      .stat-grid,
+      .modal-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cluster-stage {
+        min-height: 52vh;
+      }
+
+      .cluster-stage .legend {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        flex-wrap: wrap;
+        border-radius: 18px;
+      }
+
+      .modal {
+        padding: 14px;
+      }
+
+      .modal-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <canvas id="starfield"></canvas>
+    <div class="mist"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div class="brand-copy">
+          <strong>云图 Cloud Atlas</strong>
+          <span>Knowledge In Orbit</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="ghost" id="shuffleButton">切换航线</button>
+        <button class="primary" id="focusButton">随机探索一个星系</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel intro">
+        <span class="eyebrow">银河首页效果 demo</span>
+        <div>
+          <h1>先看见宇宙，<span>再决定要不要进入它。</span></h1>
+        </div>
+        <p>
+          这个 demo 先不追求完整业务流程，只集中验证首页第一印象：星团粒子感够不够像银河、星点 hover 是否有吸引力、未知与已探索状态是否清楚、点开后是否有想继续探索的冲动。
+        </p>
+        <div class="intro-actions">
+          <button class="primary" id="enterButton">进入当前高亮星系</button>
+          <button class="ghost" id="resetButton">重置到初始视图</button>
+        </div>
+
+        <div class="stat-grid">
+          <article class="stat-card">
+            <strong>10</strong>
+            <span>首发文明星系，分布在不同旋臂和星团密度中。</span>
+          </article>
+          <article class="stat-card">
+            <strong>3</strong>
+            <span>状态层级：未知、已探索、命名已解锁。</span>
+          </article>
+          <article class="stat-card">
+            <strong>60%</strong>
+            <span>当前 demo 中最高探索值，用来预览点亮后的感觉。</span>
+          </article>
+          <article class="stat-card">
+            <strong>Hover + Click</strong>
+            <span>桌面端靠 hover 预览，移动端可直接点击进入。</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="cluster-stage" aria-label="银河星图 demo">
+        <div class="haze-layer">
+          <div class="haze haze-a"></div>
+          <div class="haze haze-b"></div>
+          <div class="haze haze-c"></div>
+        </div>
+        <div class="cluster-grid" id="clusterGrid"></div>
+        <div class="dust-layer" id="dustLayer"></div>
+        <div class="orbit-ring r1"></div>
+        <div class="orbit-ring r2"></div>
+        <div class="orbit-ring r3"></div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="color: rgba(193, 217, 255, 0.92); background: rgba(193, 217, 255, 0.92);"></span>未知星系</span>
+          <span class="legend-item"><span class="legend-dot" style="color: #86e7ff; background: #86e7ff;"></span>已探索星系</span>
+          <span class="legend-item"><span class="legend-dot" style="color: #ffd17d; background: #ffd17d;"></span>已命名星系</span>
+        </div>
+      </section>
+
+      <aside class="panel info-panel">
+        <div class="panel-title">
+          <h2>当前观测</h2>
+          <span class="panel-badge" id="statusBadge">未探索</span>
+        </div>
+
+        <div>
+          <h3 class="selected-title" id="selectedTitle">未知星系 · A-17</h3>
+          <p class="selected-subtitle" id="selectedSubtitle">移动或点击星点，观察这个首页是否有你想要的“银河知识云图”感觉。</p>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric">
+            <strong id="metricTimes">0</strong>
+            <span>探索次数</span>
+          </div>
+          <div class="metric">
+            <strong id="metricUnlock">--</strong>
+            <span>命名状态</span>
+          </div>
+          <div class="metric">
+            <strong id="metricSignal">弱</strong>
+            <span>偏好信号</span>
+          </div>
+        </div>
+
+        <div class="progress-block">
+          <div class="progress-label">
+            <span>探索值</span>
+            <span id="progressText">18%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-title">
+            <h3>文明标签</h3>
+          </div>
+          <div class="tag-list" id="tagList"></div>
+        </div>
+
+        <div class="snapshot">
+          <strong>当前观测摘要</strong>
+          <p id="snapshotText">未知星系只显示模糊信息，hover 时会轻微膨胀并释放一层光晕。你可以先确认这种“想靠近，但还没完全知道”的感觉是否对。</p>
+        </div>
+
+        <div>
+          <div class="panel-title">
+            <h3>近期活跃星区</h3>
+            <span class="panel-badge">demo 数据</span>
+          </div>
+          <div class="quick-list" id="quickList"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="closeModal" aria-label="关闭">×</button>
+      <div class="modal-header">
+        <div>
+          <div class="modal-meta" id="modalMeta"></div>
+          <h3 id="modalTitle">未知星系 · A-17</h3>
+          <p class="muted" id="modalHook"></p>
+        </div>
+      </div>
+      <div class="modal-grid">
+        <section class="modal-section">
+          <h4>探索结果预览</h4>
+          <p id="modalBody"></p>
+        </section>
+        <section class="modal-section">
+          <h4>本次可见碎片</h4>
+          <ul id="modalFragments"></ul>
+        </section>
+      </div>
+      <div class="modal-actions">
+        <button class="primary" id="confirmExplore">确认探索结果</button>
+        <button class="secondary" id="saveShard">收藏为星际碎片</button>
+        <button class="ghost" id="nextExplore">换一个星系</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const systems = [
+      {
+        id: "craft",
+        name: "手工星人星球",
+        unknownName: "未知星系 · A-17",
+        subtitle: "材料、手感与民间创造力会在这里慢慢显形。",
+        status: "explored",
+        progress: 42,
+        exploredTimes: 12,
+        tags: ["手工技艺", "材料观察", "温柔", "可收藏"],
+        signal: "中",
+        x: 31,
+        y: 34,
+        color: "#9ce7cb",
+        hook: "有些纸看起来普通，但一折就能听出它会不会乖乖留下痕迹。",
+        body: "这个星球代表一切和手、材料、耐心有关的知识。你会从一张纸、一根线、一块木头开始，慢慢感觉到手作不是把东西做出来，而是学会和材料协商。",
+        fragments: ["宣纸、牛皮纸、棉纸的折叠脾气不同", "传统黏合方法并不比现代工具笨拙"],
+        preview: "已探索区域会稍微更亮，像你在银河里留下过一次手势。"
+      },
+      {
+        id: "intangible",
+        name: "非遗星球",
+        unknownName: "未知星系 · C-03",
+        subtitle: "它不是资料库，而是一段仍然活着的传承现场。",
+        status: "explored",
+        progress: 36,
+        exploredTimes: 9,
+        tags: ["非遗传承", "节俗", "活态文明", "现场感"],
+        signal: "中",
+        x: 24,
+        y: 63,
+        color: "#ffd17d",
+        hook: "很多非遗不是不肯教，而是关键部分根本不长在文字里。",
+        body: "在这里，探索结果更像一次靠近现场的机会。你看到的不只是技艺名字，而是为什么某些动作只能在师徒之间、在节令里、在场景里被真正理解。",
+        fragments: ["会做和会教并不是一回事", "节俗中的动作往往同时承担秩序功能"],
+        preview: "它应该带一点温度，而不是博物馆式的陈列感。"
+      },
+      {
+        id: "myth",
+        name: "山海经异兽星球",
+        unknownName: "未知星系 · F-09",
+        subtitle: "半熟悉半陌生的生命，会在地图边缘一点点露面。",
+        status: "explored",
+        progress: 58,
+        exploredTimes: 17,
+        tags: ["上古神话", "异兽传说", "荒诞", "边界感"],
+        signal: "强",
+        x: 43,
+        y: 27,
+        color: "#ff9dcc",
+        hook: "你认得它的轮廓，却认不得它的规则，这正是异兽最有力量的地方。",
+        body: "这个星系更像宇宙边缘的一张旧地图。每个生命都带一点拼接感，像是古人把恐惧、自然观察和象征意义缝进同一具身体里。",
+        fragments: ["异兽常用熟悉轮廓承载陌生规则", "怪物经常被安放在认知边界之外"],
+        preview: "探索值超过 50% 后，名字会从星尘里显形。"
+      },
+      {
+        id: "dunhuang",
+        name: "敦煌飞天星球",
+        unknownName: "未知星系 · H-12",
+        subtitle: "流沙、壁光、乐舞和丝路回声，在这里混成一团会发光的尘。",
+        status: "unlocked",
+        progress: 63,
+        exploredTimes: 19,
+        tags: ["佛教艺术", "丝路交流", "瑰丽", "图像细节"],
+        signal: "强",
+        x: 60,
+        y: 37,
+        color: "#ffb48a",
+        hook: "飞天真正迷人的，往往不是飞，而是那种被光托起来的漂浮感。",
+        body: "这个星球更适合做高密度却不沉重的内容体验。点开之后，你会看到壁画、姿态、颜料、乐舞和文明交汇如何在一张图里同时发生。",
+        fragments: ["飘带比人物更先画出飞的感觉", "一幅壁画里常常同时住着多种文明痕迹"],
+        preview: "如果你想要首页有一块更美、更有文化深度的高亮区，它很适合。"
+      },
+      {
+        id: "cthulhu",
+        name: "克苏鲁潮汐星球",
+        unknownName: "未知星系 · K-20",
+        subtitle: "真正压下来的不是怪物，而是人类忽然失去中心位置的那一瞬间。",
+        status: "explored",
+        progress: 31,
+        exploredTimes: 7,
+        tags: ["宇宙恐惧", "世界观", "幽暗", "不可名状"],
+        signal: "中",
+        x: 70,
+        y: 26,
+        color: "#86e7ff",
+        hook: "它最可怕的不是长相，而是让你意识到宇宙根本不需要理解你。",
+        body: "这个星球负责提供更深的黑海感。它不只是怪物设定集合，而是一种世界观压力测试，适合拉开整个首页在情绪上的纵深。",
+        fragments: ["不可名状是一种故意留下空白的叙事策略", "理智值下降本质上是认知结构崩塌"],
+        preview: "它需要一点阴影和危险感，但不能脏乱。"
+      },
+      {
+        id: "qin",
+        name: "大秦观测站",
+        unknownName: "未知星系 · M-08",
+        subtitle: "这不是帝王传记，而是一台帝国机器怎样开始运转。",
+        status: "explored",
+        progress: 47,
+        exploredTimes: 11,
+        tags: ["帝国制度", "历史", "冷峻", "组织能力"],
+        signal: "中",
+        x: 54,
+        y: 62,
+        color: "#d8e2ff",
+        hook: "统一文字最厉害的地方，不是整齐，而是让整个帝国终于能更稳定地运转。",
+        body: "这个星球更硬，更规整，也更适合用来证明你的产品不只是梦幻感，还能承载真正有力量的知识主题。",
+        fragments: ["书同文首先服务治理效率", "道路系统更像帝国神经网络"],
+        preview: "如果你想让首页不只有梦幻感，这颗星会负责把骨架立起来。"
+      },
+      {
+        id: "tang",
+        name: "贞观星港",
+        unknownName: "未知星系 · P-15",
+        subtitle: "盛世不是口号，而是一种高密度协作后显出来的开阔。",
+        status: "explored",
+        progress: 39,
+        exploredTimes: 8,
+        tags: ["历史人物", "治理", "明亮", "开放感"],
+        signal: "中",
+        x: 77,
+        y: 57,
+        color: "#ffe7a3",
+        hook: "真正稀有的不是听劝，而是当权力很大时，还给不同意见留出真实空间。",
+        body: "它像银河里一块更有秩序感的明亮港口，适合把人和制度的关系讲得清楚，同时保留一种盛世向外打开的感觉。",
+        fragments: ["纳谏不是态度问题，更是机制问题", "开放感常常来自结构而不是装饰"],
+        preview: "它和大秦的区别，应该在气息而不是题材标签上。"
+      },
+      {
+        id: "fungi",
+        name: "菌菇秘林星球",
+        unknownName: "未知星系 · R-04",
+        subtitle: "安静得像没有事发生，但地下其实忙得可怕。",
+        status: "locked",
+        progress: 18,
+        exploredTimes: 2,
+        tags: ["怪奇生命", "生态关系", "潮湿", "森林网络"],
+        signal: "弱",
+        x: 36,
+        y: 74,
+        color: "#9ce7cb",
+        hook: "你看到的是蘑菇，真正庞大的部分却常常藏在地下。",
+        body: "这类题材很适合用颗粒感来表现，因为它本身就在讲地下网络、看不见的连接和静止表面下的巨大活动。",
+        fragments: ["分解不是腐烂终点，而是循环重启", "菌根网络会改变植物之间的交换关系"],
+        preview: "未知状态下它应该更朦胧一点，像雾里会发光的孢子。"
+      },
+      {
+        id: "invention",
+        name: "失落发明星球",
+        unknownName: "未知星系 · T-18",
+        subtitle: "一台还在响的古怪机器，足以让整个星区突然变得很有故事。",
+        status: "locked",
+        progress: 12,
+        exploredTimes: 1,
+        tags: ["奇妙发明", "古代工程", "神秘", "时机"],
+        signal: "弱",
+        x: 19,
+        y: 47,
+        color: "#ffb48a",
+        hook: "很多惊人的发明不是不够好，而是生在了时代还接不住它的时候。",
+        body: "它会给首页带来一种废墟里捡到装置的惊喜感。点开后适合做反差型内容，让人觉得古代世界忽然亮出一截不属于那个时代的机械光。",
+        fragments: ["发明要改变时代，还需要场景和传播路径", "技术史常常不是线性前进"],
+        preview: "这颗星更适合低频但高记忆点的出现方式。"
+      },
+      {
+        id: "otherworld",
+        name: "异世界转运站",
+        unknownName: "未知星系 · Z-01",
+        subtitle: "当一扇门被看见，整个宇宙的规则就不再只有眼前这一套。",
+        status: "locked",
+        progress: 9,
+        exploredTimes: 0,
+        tags: ["世界构建", "文化母题", "神秘", "多元宇宙"],
+        signal: "弱",
+        x: 84,
+        y: 41,
+        color: "#d7a9ff",
+        hook: "门之所以迷人，不只是因为能过去，而是因为它证明世界还有另一层。",
+        body: "这个星球会把你的首页从文化题材进一步拉向“世界观产品”。它负责承接神话母题、异世界规则和未来更开放的用户想象。",
+        fragments: ["门是最节省解释成本的世界切换装置", "幻想世界常通过门来安排命运转折"],
+        preview: "它更像后期产品野心的一束预告光。"
+      }
+    ];
+
+    const clusterGrid = document.getElementById("clusterGrid");
+    const dustLayer = document.getElementById("dustLayer");
+    const tooltip = document.getElementById("tooltip");
+    const modal = document.getElementById("modal");
+    const toast = document.getElementById("toast");
+
+    const selectedTitle = document.getElementById("selectedTitle");
+    const selectedSubtitle = document.getElementById("selectedSubtitle");
+    const statusBadge = document.getElementById("statusBadge");
+    const metricTimes = document.getElementById("metricTimes");
+    const metricUnlock = document.getElementById("metricUnlock");
+    const metricSignal = document.getElementById("metricSignal");
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+    const tagList = document.getElementById("tagList");
+    const snapshotText = document.getElementById("snapshotText");
+    const quickList = document.getElementById("quickList");
+
+    const modalTitle = document.getElementById("modalTitle");
+    const modalHook = document.getElementById("modalHook");
+    const modalBody = document.getElementById("modalBody");
+    const modalFragments = document.getElementById("modalFragments");
+    const modalMeta = document.getElementById("modalMeta");
+
+    let activeSystemId = systems[0].id;
+
+    const statusText = {
+      locked: "未探索",
+      explored: "已探索",
+      unlocked: "已命名"
+    };
+
+    function gaussian() {
+      let u = 0;
+      let v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+
+    function createDustParticle(x, y, size, opacity, className, color) {
+      if (x < 0 || x > 100 || y < 0 || y > 100) {
+        return;
+      }
+      const dot = document.createElement("span");
+      dot.className = `dust ${className}`;
+      dot.style.left = x + "%";
+      dot.style.top = y + "%";
+      dot.style.width = size + "px";
+      dot.style.height = size + "px";
+      dot.style.opacity = String(opacity);
+      dot.style.animationDelay = (Math.random() * 6).toFixed(2) + "s";
+      dot.style.setProperty("--dust-color", color);
+      dustLayer.appendChild(dot);
+    }
+
+    function createDust() {
+      dustLayer.innerHTML = "";
+
+      const coreCount = 130;
+      const armCount = 340;
+      const farCount = 110;
+      const colors = ["rgba(138, 231, 255, 0.92)", "rgba(255, 208, 136, 0.88)", "rgba(209, 181, 255, 0.86)"];
+
+      for (let index = 0; index < coreCount; index += 1) {
+        const x = 50 + gaussian() * 6.4;
+        const y = 50 + gaussian() * 3.1;
+        const size = Math.random() * 3.8 + 1.1;
+        const opacity = 0.18 + Math.random() * 0.35;
+        createDustParticle(x, y, size, opacity, "core", colors[index % colors.length]);
+      }
+
+      for (let index = 0; index < armCount; index += 1) {
+        const armIndex = index % 3;
+        const radius = Math.pow(Math.random(), 0.78) * 36 + 6;
+        const baseAngle = radius * 0.18 + armIndex * ((Math.PI * 2) / 3) - 0.75;
+        const angle = baseAngle + gaussian() * 0.22;
+        const x = 50 + Math.cos(angle) * radius * 1.02 + gaussian() * (1.1 + radius * 0.03);
+        const y = 50 + Math.sin(angle) * radius * 0.44 + gaussian() * (0.7 + radius * 0.02);
+        const size = Math.random() * 3 + 0.8;
+        const opacity = 0.08 + Math.random() * 0.24;
+        createDustParticle(x, y, size, opacity, "arm", colors[armIndex]);
+      }
+
+      for (let index = 0; index < farCount; index += 1) {
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        const size = Math.random() * 2 + 0.6;
+        const opacity = 0.04 + Math.random() * 0.14;
+        createDustParticle(x, y, size, opacity, "far", "rgba(176, 204, 255, 0.72)");
+      }
+    }
+
+    function renderQuickList() {
+      const list = [
+        { title: "敦煌飞天星球", note: "图像反馈强，适合做首页高亮", color: "#ffb48a" },
+        { title: "山海经异兽星球", note: "故事性强，适合持续点击", color: "#ff9dcc" },
+        { title: "克苏鲁潮汐星球", note: "负责情绪纵深和危险感", color: "#86e7ff" }
+      ];
+      quickList.innerHTML = list.map((item) => `
+        <article class="quick-item">
+          <span class="quick-dot" style="color:${item.color}; background:${item.color};"></span>
+          <div class="quick-copy">
+            <strong>${item.title}</strong>
+            <span>${item.note}</span>
+          </div>
+          <em>活跃</em>
+        </article>
+      `).join("");
+    }
+
+    function renderSystems() {
+      clusterGrid.innerHTML = "";
+      systems.forEach((system) => {
+        const button = document.createElement("button");
+        button.className = `system ${system.status}`;
+        button.dataset.id = system.id;
+        button.setAttribute("aria-label", system.name);
+        button.style.left = system.x + "%";
+        button.style.top = system.y + "%";
+        button.style.color = system.color;
+
+        button.addEventListener("mouseenter", (event) => {
+          setActive(system.id, false);
+          showTooltip(system, event.currentTarget);
+        });
+
+        button.addEventListener("mousemove", (event) => {
+          positionTooltip(event.clientX, event.clientY);
+        });
+
+        button.addEventListener("mouseleave", () => {
+          hideTooltip();
+        });
+
+        button.addEventListener("focus", (event) => {
+          setActive(system.id, false);
+          showTooltip(system, event.currentTarget);
+        });
+
+        button.addEventListener("blur", hideTooltip);
+        button.addEventListener("click", () => {
+          setActive(system.id, true);
+          openModal(system);
+        });
+
+        clusterGrid.appendChild(button);
+      });
+      syncActiveButton();
+    }
+
+    function showTooltip(system, target) {
+      tooltip.innerHTML = `
+        <strong>${system.status === "locked" ? system.unknownName : system.name}</strong>
+        <span>${system.status === "locked" ? "未探索区域，先靠近看看。" : system.subtitle}</span>
+      `;
+      const rect = target.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const topY = rect.top;
+      positionTooltip(centerX, topY);
+      tooltip.classList.add("visible");
+    }
+
+    function positionTooltip(x, y) {
+      tooltip.style.left = x + "px";
+      tooltip.style.top = y + "px";
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove("visible");
+    }
+
+    function setActive(id, emphasize) {
+      activeSystemId = id;
+      syncActiveButton();
+      renderSelectedPanel();
+      if (emphasize) {
+        pulseToast("已将当前视角切换到「" + getActiveSystem().name + "」");
+      }
+    }
+
+    function getActiveSystem() {
+      return systems.find((system) => system.id === activeSystemId) || systems[0];
+    }
+
+    function syncActiveButton() {
+      document.querySelectorAll(".system").forEach((node) => {
+        node.classList.toggle("active", node.dataset.id === activeSystemId);
+      });
+    }
+
+    function renderSelectedPanel() {
+      const system = getActiveSystem();
+      selectedTitle.textContent = system.status === "locked" ? system.unknownName : system.name;
+      selectedSubtitle.textContent = system.subtitle;
+      statusBadge.textContent = statusText[system.status];
+      metricTimes.textContent = String(system.exploredTimes);
+      metricUnlock.textContent = system.progress >= 50 ? "已解锁" : "未解锁";
+      metricSignal.textContent = system.signal;
+      progressText.textContent = system.progress + "%";
+      progressFill.style.width = system.progress + "%";
+      snapshotText.textContent = system.preview;
+      tagList.innerHTML = system.tags.map((tag) => `<span class="tag">${tag}</span>`).join("");
+    }
+
+    function openModal(system) {
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+      modalTitle.textContent = system.status === "locked" ? system.unknownName : system.name;
+      modalHook.textContent = system.hook;
+      modalBody.textContent = system.body;
+      modalMeta.innerHTML = [
+        `<span>${statusText[system.status]}</span>`,
+        `<span>探索值 ${system.progress}%</span>`,
+        `<span>探索 ${system.exploredTimes} 次</span>`
+      ].join("");
+      modalFragments.innerHTML = system.fragments.map((fragment) => `<li>${fragment}</li>`).join("");
+    }
+
+    function closeModal() {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    function pulseToast(text) {
+      toast.textContent = text;
+      toast.classList.add("show");
+      window.clearTimeout(pulseToast.timer);
+      pulseToast.timer = window.setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    function randomSystem(preferLocked = false) {
+      const pool = preferLocked ? systems.filter((item) => item.status === "locked") : systems;
+      return pool[Math.floor(Math.random() * pool.length)] || systems[0];
+    }
+
+    document.getElementById("closeModal").addEventListener("click", closeModal);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    document.getElementById("confirmExplore").addEventListener("click", () => {
+      const system = getActiveSystem();
+      system.exploredTimes += 1;
+      system.progress = Math.min(system.progress + 8, 100);
+      if (system.progress >= 50) {
+        system.status = "unlocked";
+      } else if (system.exploredTimes > 0) {
+        system.status = "explored";
+      }
+      renderSystems();
+      renderSelectedPanel();
+      openModal(system);
+      pulseToast("探索值已提升到 " + system.progress + "%");
+    });
+
+    document.getElementById("saveShard").addEventListener("click", () => {
+      pulseToast("已收藏为星际碎片");
+    });
+
+    document.getElementById("nextExplore").addEventListener("click", () => {
+      const next = randomSystem(true);
+      setActive(next.id, false);
+      openModal(next);
+    });
+
+    document.getElementById("focusButton").addEventListener("click", () => {
+      const next = randomSystem();
+      setActive(next.id, true);
+      openModal(next);
+    });
+
+    document.getElementById("shuffleButton").addEventListener("click", () => {
+      systems.forEach((system) => {
+        const dx = (Math.random() - 0.5) * 6;
+        const dy = (Math.random() - 0.5) * 6;
+        system.x = Math.max(10, Math.min(90, system.x + dx));
+        system.y = Math.max(14, Math.min(84, system.y + dy));
+      });
+      renderSystems();
+      pulseToast("已切换一条新的银河航线");
+    });
+
+    document.getElementById("enterButton").addEventListener("click", () => {
+      openModal(getActiveSystem());
+    });
+
+    document.getElementById("resetButton").addEventListener("click", () => {
+      window.location.reload();
+    });
+
+    const canvas = document.getElementById("starfield");
+    const context = canvas.getContext("2d");
+    const stars = [];
+    const bandStars = [];
+
+    function createStars(width, height) {
+      stars.length = 0;
+      bandStars.length = 0;
+      const total = Math.max(180, Math.floor((width * height) / 9000));
+      for (let index = 0; index < total; index += 1) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: Math.random() * 1.7 + 0.3,
+          alpha: Math.random() * 0.5 + 0.15,
+          speed: Math.random() * 0.16 + 0.03
+        });
+      }
+
+      const clusterTotal = Math.max(260, Math.floor((width * height) / 5200));
+      for (let index = 0; index < clusterTotal; index += 1) {
+        const t = Math.random() * Math.PI * 2;
+        const radius = Math.pow(Math.random(), 0.7) * Math.min(width, height) * 0.22;
+        const arm = index % 3;
+        const angle = radius * 0.014 + arm * ((Math.PI * 2) / 3) + gaussian() * 0.18;
+        bandStars.push({
+          x: width * 0.5 + Math.cos(angle) * radius * 1.25 + gaussian() * 14,
+          y: height * 0.52 + Math.sin(angle) * radius * 0.44 + gaussian() * 8,
+          size: Math.random() * 2.1 + 0.4,
+          alpha: Math.random() * 0.48 + 0.12,
+          color: ["rgba(139, 227, 255, 0.9)", "rgba(255, 223, 161, 0.82)", "rgba(214, 192, 255, 0.8)"][arm]
+        });
+      }
+    }
+
+    function resizeCanvas() {
+      const ratio = window.devicePixelRatio || 1;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      createStars(width, height);
+    }
+
+    function drawStarfield() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      context.clearRect(0, 0, width, height);
+      const gradient = context.createRadialGradient(width * 0.48, height * 0.5, 0, width * 0.5, height * 0.5, width * 0.44);
+      gradient.addColorStop(0, "rgba(148, 220, 255, 0.11)");
+      gradient.addColorStop(0.28, "rgba(161, 133, 255, 0.08)");
+      gradient.addColorStop(0.52, "rgba(255, 203, 132, 0.06)");
+      gradient.addColorStop(1, "rgba(3, 6, 14, 0)");
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, width, height);
+
+      context.save();
+      context.translate(width * 0.5, height * 0.52);
+      context.rotate(-0.18);
+      context.scale(1.55, 0.48);
+      const core = context.createRadialGradient(0, 0, 0, 0, 0, Math.min(width, height) * 0.18);
+      core.addColorStop(0, "rgba(255, 247, 220, 0.19)");
+      core.addColorStop(0.18, "rgba(162, 223, 255, 0.14)");
+      core.addColorStop(0.42, "rgba(143, 118, 255, 0.07)");
+      core.addColorStop(0.68, "rgba(255, 191, 126, 0.05)");
+      core.addColorStop(1, "rgba(0, 0, 0, 0)");
+      context.fillStyle = core;
+      context.beginPath();
+      context.ellipse(0, 0, Math.min(width, height) * 0.18, Math.min(width, height) * 0.18, 0, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+
+      bandStars.forEach((star) => {
+        context.beginPath();
+        context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        context.fillStyle = star.color.replace(/0\.[0-9]+\)/, `${star.alpha})`);
+        context.fill();
+      });
+
+      stars.forEach((star) => {
+        context.beginPath();
+        context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        context.fillStyle = `rgba(255,255,255,${star.alpha})`;
+        context.fill();
+        star.alpha += (Math.random() - 0.5) * 0.008;
+        star.alpha = Math.max(0.1, Math.min(0.72, star.alpha));
+        star.y += star.speed;
+        if (star.y > height + 2) {
+          star.y = -2;
+          star.x = Math.random() * width;
+        }
+      });
+
+      requestAnimationFrame(drawStarfield);
+    }
+
+    resizeCanvas();
+    renderQuickList();
+    createDust();
+    renderSystems();
+    renderSelectedPanel();
+    drawStarfield();
+
+    window.addEventListener("resize", resizeCanvas);
+  </script>
+</body>
+</html>
