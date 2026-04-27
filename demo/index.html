@@ -9,16 +9,53 @@
       --bg-0: #07111f;
       --bg-1: #0b1730;
       --bg-2: #142449;
+      --bg-end: #050b18;
+      --bg-glow-a: rgba(50, 96, 182, 0.28);
+      --bg-glow-b: rgba(255, 176, 112, 0.15);
+      --bg-glow-c: rgba(107, 195, 255, 0.18);
       --text: #eef4ff;
       --muted: rgba(219, 233, 255, 0.68);
       --line: rgba(170, 196, 255, 0.14);
       --panel: rgba(8, 15, 31, 0.54);
       --panel-strong: rgba(7, 14, 28, 0.78);
+      --panel-top: rgba(11, 20, 41, 0.7);
+      --panel-bottom: rgba(7, 13, 27, 0.48);
+      --panel-sheen: rgba(255, 255, 255, 0.05);
       --cyan: #86e7ff;
       --gold: #ffd17d;
       --rose: #ff9dcc;
       --mint: #9ce7cb;
       --orange: #ffb48a;
+      --grid-line: rgba(255, 255, 255, 0.02);
+      --vignette: rgba(0, 0, 0, 0.54);
+      --mist-core: rgba(255, 248, 223, 0.16);
+      --mist-cyan: rgba(141, 221, 255, 0.17);
+      --mist-violet: rgba(143, 112, 255, 0.13);
+      --mist-gold: rgba(255, 190, 117, 0.13);
+      --mist-mint: rgba(138, 239, 218, 0.1);
+      --brand-core: rgba(137, 224, 255, 0.86);
+      --brand-ring: rgba(35, 120, 255, 0.12);
+      --brand-warm: rgba(255, 204, 138, 0.42);
+      --brand-shell: #09172c;
+      --button-a: rgba(110, 230, 255, 0.22);
+      --button-b: rgba(115, 136, 255, 0.22);
+      --eyebrow-border: rgba(161, 209, 255, 0.18);
+      --eyebrow-bg: rgba(125, 180, 255, 0.08);
+      --eyebrow-text: #d7ecff;
+      --stage-core: rgba(255, 247, 216, 0.14);
+      --stage-cyan: rgba(161, 224, 255, 0.14);
+      --stage-violet: rgba(168, 132, 255, 0.12);
+      --stage-gold: rgba(255, 190, 117, 0.12);
+      --stage-shell: rgba(11, 18, 37, 0.52);
+      --stage-floor: rgba(3, 7, 16, 0.3);
+      --stage-before-core: rgba(255, 252, 240, 0.16);
+      --stage-before-cyan: rgba(137, 199, 255, 0.14);
+      --stage-before-violet: rgba(150, 114, 255, 0.12);
+      --stage-before-gold: rgba(255, 181, 109, 0.12);
+      --stage-after-cyan: rgba(118, 211, 255, 0.08);
+      --stage-after-core: rgba(255, 255, 255, 0.09);
+      --stage-after-gold: rgba(255, 208, 142, 0.08);
+      --stage-after-blue: rgba(124, 167, 255, 0.08);
       --shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
       --radius-lg: 28px;
       --radius-md: 20px;
@@ -35,12 +72,14 @@
       min-height: 100%;
       font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       background:
-        radial-gradient(circle at 18% 18%, rgba(50, 96, 182, 0.28), transparent 30%),
-        radial-gradient(circle at 82% 22%, rgba(255, 176, 112, 0.15), transparent 24%),
-        radial-gradient(circle at 52% 72%, rgba(107, 195, 255, 0.18), transparent 28%),
-        linear-gradient(180deg, var(--bg-0), var(--bg-1) 45%, #050b18 100%);
+        radial-gradient(circle at 18% 18%, var(--bg-glow-a), transparent 30%),
+        radial-gradient(circle at 82% 22%, var(--bg-glow-b), transparent 24%),
+        radial-gradient(circle at 52% 72%, var(--bg-glow-c), transparent 28%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 45%, var(--bg-end) 100%);
+      background-size: 118% 118%, 112% 112%, 114% 114%, 100% 100%;
       color: var(--text);
       overflow: hidden;
+      animation: backgroundDrift 26s ease-in-out infinite alternate;
     }
 
     body::before,
@@ -53,16 +92,18 @@
 
     body::before {
       background-image:
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
       background-size: 120px 120px;
       mask-image: radial-gradient(circle at center, black 40%, transparent 88%);
       opacity: 0.4;
+      animation: gridDrift 38s linear infinite;
     }
 
     body::after {
       background:
-        radial-gradient(circle at center, transparent 52%, rgba(0, 0, 0, 0.54) 100%);
+        radial-gradient(circle at center, transparent 52%, var(--vignette) 100%);
+      animation: vignettePulse 18s ease-in-out infinite;
     }
 
     button,
@@ -90,16 +131,17 @@
       inset: 3% 6% 6%;
       border-radius: 50%;
       background:
-        radial-gradient(ellipse at 50% 50%, rgba(255, 248, 223, 0.16), transparent 16%),
-        radial-gradient(ellipse at 46% 48%, rgba(141, 221, 255, 0.17), transparent 24%),
-        radial-gradient(ellipse at 39% 53%, rgba(143, 112, 255, 0.13), transparent 18%),
-        radial-gradient(ellipse at 60% 46%, rgba(255, 190, 117, 0.13), transparent 19%),
-        radial-gradient(ellipse at 72% 54%, rgba(138, 239, 218, 0.1), transparent 17%);
+        radial-gradient(ellipse at 50% 50%, var(--mist-core), transparent 16%),
+        radial-gradient(ellipse at 46% 48%, var(--mist-cyan), transparent 24%),
+        radial-gradient(ellipse at 39% 53%, var(--mist-violet), transparent 18%),
+        radial-gradient(ellipse at 60% 46%, var(--mist-gold), transparent 19%),
+        radial-gradient(ellipse at 72% 54%, var(--mist-mint), transparent 17%);
       filter: blur(46px);
       opacity: 0.98;
       transform: rotate(-10deg) scale(1.08, 0.72);
       pointer-events: none;
       z-index: 1;
+      animation: mistFloat 18s ease-in-out infinite alternate;
     }
 
     .topbar {
@@ -123,9 +165,9 @@
       height: 42px;
       border-radius: 50%;
       background:
-        radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.98), rgba(137, 224, 255, 0.86) 28%, rgba(35, 120, 255, 0.12) 60%, transparent 72%),
-        radial-gradient(circle at 64% 55%, rgba(255, 204, 138, 0.42), transparent 55%),
-        #09172c;
+        radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.98), var(--brand-core) 28%, var(--brand-ring) 60%, transparent 72%),
+        radial-gradient(circle at 64% 55%, var(--brand-warm), transparent 55%),
+        var(--brand-shell);
       box-shadow: 0 0 24px rgba(134, 231, 255, 0.34);
     }
 
@@ -149,6 +191,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .ghost,
@@ -171,7 +215,7 @@
     }
 
     .primary {
-      background: linear-gradient(135deg, rgba(110, 230, 255, 0.22), rgba(115, 136, 255, 0.22));
+      background: linear-gradient(135deg, var(--button-a), var(--button-b));
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
     }
 
@@ -186,7 +230,7 @@
 
     .panel {
       position: relative;
-      background: linear-gradient(180deg, rgba(11, 20, 41, 0.7), rgba(7, 13, 27, 0.48));
+      background: linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow);
@@ -198,7 +242,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 30%);
+      background: linear-gradient(180deg, var(--panel-sheen), transparent 30%);
       pointer-events: none;
     }
 
@@ -216,10 +260,10 @@
       width: fit-content;
       padding: 7px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(161, 209, 255, 0.18);
-      background: rgba(125, 180, 255, 0.08);
+      border: 1px solid var(--eyebrow-border);
+      background: var(--eyebrow-bg);
       font-size: 12px;
-      color: #d7ecff;
+      color: var(--eyebrow-text);
     }
 
     .intro h1 {
@@ -275,17 +319,30 @@
 
     .cluster-stage {
       position: relative;
+      --focus-x: 50%;
+      --focus-y: 50%;
+      --focus-scale: 1;
+      --tilt-x: -8deg;
+      --tilt-y: 10deg;
       border-radius: 34px;
       min-height: 100%;
       overflow: hidden;
       background:
-        radial-gradient(circle at 50% 50%, rgba(255, 247, 216, 0.14), transparent 10%),
-        radial-gradient(ellipse at 50% 51%, rgba(161, 224, 255, 0.14), transparent 22%),
-        radial-gradient(ellipse at 42% 52%, rgba(168, 132, 255, 0.12), transparent 16%),
-        radial-gradient(ellipse at 60% 47%, rgba(255, 190, 117, 0.12), transparent 18%),
-        linear-gradient(180deg, rgba(11, 18, 37, 0.52), rgba(3, 7, 16, 0.3));
+        radial-gradient(circle at 50% 50%, var(--stage-core), transparent 10%),
+        radial-gradient(ellipse at 50% 51%, var(--stage-cyan), transparent 22%),
+        radial-gradient(ellipse at 42% 52%, var(--stage-violet), transparent 16%),
+        radial-gradient(ellipse at 60% 47%, var(--stage-gold), transparent 18%),
+        linear-gradient(180deg, var(--stage-shell), var(--stage-floor));
       border: 1px solid rgba(167, 199, 255, 0.14);
       box-shadow: var(--shadow);
+      perspective: 1400px;
+      perspective-origin: 50% 50%;
+      cursor: grab;
+      transition: box-shadow 420ms ease, border-color 420ms ease, background 420ms ease;
+    }
+
+    .cluster-stage.dragging {
+      cursor: grabbing;
     }
 
     .cluster-stage::before {
@@ -293,10 +350,10 @@
       position: absolute;
       inset: 18% 8%;
       background:
-        radial-gradient(ellipse at center, rgba(255, 252, 240, 0.16), transparent 14%),
-        radial-gradient(ellipse at center, rgba(137, 199, 255, 0.14), transparent 38%),
-        radial-gradient(ellipse at 35% 54%, rgba(150, 114, 255, 0.12), transparent 20%),
-        radial-gradient(ellipse at 68% 44%, rgba(255, 181, 109, 0.12), transparent 20%);
+        radial-gradient(ellipse at center, var(--stage-before-core), transparent 14%),
+        radial-gradient(ellipse at center, var(--stage-before-cyan), transparent 38%),
+        radial-gradient(ellipse at 35% 54%, var(--stage-before-violet), transparent 20%),
+        radial-gradient(ellipse at 68% 44%, var(--stage-before-gold), transparent 20%);
       filter: blur(18px);
       pointer-events: none;
     }
@@ -306,51 +363,49 @@
       position: absolute;
       inset: 8% 4%;
       background:
-        radial-gradient(ellipse at 26% 62%, rgba(118, 211, 255, 0.08), transparent 14%),
-        radial-gradient(ellipse at 42% 44%, rgba(255, 255, 255, 0.09), transparent 11%),
-        radial-gradient(ellipse at 58% 56%, rgba(255, 208, 142, 0.08), transparent 14%),
-        radial-gradient(ellipse at 77% 40%, rgba(124, 167, 255, 0.08), transparent 13%);
+        radial-gradient(ellipse at 26% 62%, var(--stage-after-cyan), transparent 14%),
+        radial-gradient(ellipse at 42% 44%, var(--stage-after-core), transparent 11%),
+        radial-gradient(ellipse at 58% 56%, var(--stage-after-gold), transparent 14%),
+        radial-gradient(ellipse at 77% 40%, var(--stage-after-blue), transparent 13%);
       filter: blur(24px);
       pointer-events: none;
       transform: rotate(-12deg);
       z-index: 1;
     }
 
+    .scene-viewport {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+
+    .scene-3d {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transform: translateZ(0);
+      will-change: transform;
+    }
+
+    .cluster-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
     .cluster-grid {
       position: absolute;
       inset: 0;
       z-index: 2;
-    }
-
-    .dust-layer {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      mix-blend-mode: screen;
-    }
-
-    .dust {
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.96), var(--dust-color, rgba(173, 218, 255, 0.84)) 70%, transparent 100%);
-      opacity: 0.2;
-      filter: blur(0.25px);
-      animation: pulse 5.8s ease-in-out infinite;
-    }
-
-    .dust.core {
-      box-shadow: 0 0 12px rgba(255, 246, 201, 0.36);
-    }
-
-    .dust.arm {
-      box-shadow: 0 0 9px color-mix(in srgb, var(--dust-color, #86e7ff) 42%, transparent);
-    }
-
-    .dust.far {
-      box-shadow: 0 0 6px rgba(152, 191, 255, 0.12);
+      transform-style: preserve-3d;
+      pointer-events: auto;
+      overflow: visible;
+      transition: filter 520ms ease;
     }
 
     .haze-layer {
@@ -358,6 +413,8 @@
       inset: 0;
       pointer-events: none;
       z-index: 1;
+      transition: opacity 420ms ease;
+      transform-style: preserve-3d;
     }
 
     .haze {
@@ -404,101 +461,208 @@
       transform: translate(-50%, -50%) rotate(-8deg);
       pointer-events: none;
       z-index: 1;
+      animation: orbitSpin 42s linear infinite;
     }
 
     .orbit-ring.r1 {
       width: 36%;
       height: 22%;
+      animation-name: orbitSpin;
     }
 
     .orbit-ring.r2 {
       width: 56%;
       height: 34%;
       transform: translate(-50%, -50%) rotate(14deg);
+      animation-name: orbitSpinWide;
+      animation-duration: 58s;
+      animation-direction: reverse;
     }
 
     .orbit-ring.r3 {
       width: 78%;
       height: 46%;
       transform: translate(-50%, -50%) rotate(-16deg);
+      animation-name: orbitSpinOuter;
+      animation-duration: 72s;
+    }
+
+    .cluster-stage.zooming {
+      border-color: rgba(187, 221, 255, 0.28);
+      box-shadow: 0 30px 86px rgba(0, 0, 0, 0.42), 0 0 72px rgba(145, 215, 255, 0.16);
+    }
+
+    .cluster-stage.zooming .cluster-grid {
+      filter: saturate(1.28) brightness(1.1);
+    }
+
+    .cluster-stage.zooming .cluster-canvas {
+      filter: saturate(1.18) brightness(1.1);
+    }
+
+    .cluster-stage.zooming .haze-layer {
+      opacity: 0.92;
     }
 
     .system {
       position: absolute;
-      width: 24px;
-      height: 24px;
-      margin: -12px 0 0 -12px;
+      --planet-size: 10px;
+      --planet-main: var(--cyan);
+      --planet-accent: #ffffff;
+      --planet-shadow: rgba(134, 231, 255, 0.44);
+      --planet-hit: 34px;
+      --ring-tilt: 0deg;
+      --ring-opacity: 0.36;
+      width: var(--planet-hit);
+      height: var(--planet-hit);
+      margin: calc(var(--planet-hit) * -0.5) 0 0 calc(var(--planet-hit) * -0.5);
       border: 0;
       background: transparent;
       padding: 0;
       cursor: pointer;
       z-index: 3;
-      transition: transform 220ms ease;
+      left: 0;
+      top: 0;
+      margin: 0;
+      transform: translate3d(var(--screen-x, 0px), var(--screen-y, 0px), 0) scale(var(--planet-scale, 1));
+      transform-style: preserve-3d;
+      transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), filter 220ms ease;
+      will-change: transform, opacity;
     }
 
-    .system::before,
-    .system::after {
-      content: "";
+    .system .planet-core,
+    .system .planet-aura,
+    .system .planet-ring {
       position: absolute;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
       border-radius: 50%;
-      transition: transform 220ms ease, opacity 220ms ease, box-shadow 220ms ease;
+      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), opacity 260ms ease, box-shadow 260ms ease, filter 260ms ease;
+      pointer-events: none;
     }
 
-    .system::before {
-      width: 7px;
-      height: 7px;
-      background: radial-gradient(circle at 35% 35%, #fff, currentColor 68%, transparent 100%);
-      box-shadow: 0 0 16px currentColor;
-      color: var(--cyan);
+    .system .planet-core {
+      width: var(--planet-size);
+      height: var(--planet-size);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), color-mix(in srgb, var(--planet-accent) 72%, var(--planet-main)) 36%, color-mix(in srgb, var(--planet-main) 84%, #021323) 86%);
+      box-shadow: 0 0 12px var(--planet-main), 0 0 22px var(--planet-shadow);
+      animation: planetPulse 4.2s ease-in-out infinite;
     }
 
-    .system::after {
-      width: 24px;
-      height: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      opacity: 0;
+    .system .planet-aura {
+      width: calc(var(--planet-size) * 2.8);
+      height: calc(var(--planet-size) * 2.8);
+      background: radial-gradient(circle at center, color-mix(in srgb, var(--planet-main) 34%, transparent) 0%, transparent 70%);
+      opacity: 0.44;
+      filter: blur(1px);
+      animation: auraDrift 5.6s ease-in-out infinite;
+    }
+
+    .system .planet-ring {
+      width: calc(var(--planet-size) * 2.2);
+      height: calc(var(--planet-size) * 1.25);
+      border: 1px solid color-mix(in srgb, var(--planet-main) 72%, #ffffff);
+      opacity: var(--ring-opacity);
+      transform: translate(-50%, -50%) rotate(var(--ring-tilt));
+      filter: drop-shadow(0 0 6px color-mix(in srgb, var(--planet-main) 40%, transparent));
+      animation: ringSpin 8s linear infinite;
     }
 
     .system:hover,
     .system:focus-visible,
     .system.active {
-      transform: scale(1.16);
+      transform: translate3d(var(--screen-x, 0px), var(--screen-y, 0px), 0) scale(calc(var(--planet-scale, 1) * 1.22));
+      filter: brightness(1.08);
       outline: none;
     }
 
-    .system:hover::before,
-    .system:focus-visible::before,
-    .system.active::before {
-      transform: translate(-50%, -50%) scale(1.3);
-      box-shadow: 0 0 22px currentColor, 0 0 42px color-mix(in srgb, currentColor 48%, transparent);
+    .system:hover .planet-core,
+    .system:focus-visible .planet-core,
+    .system.active .planet-core {
+      transform: translate(-50%, -50%) scale(1.36);
+      box-shadow: 0 0 18px var(--planet-main), 0 0 38px var(--planet-shadow), 0 0 56px color-mix(in srgb, var(--planet-main) 26%, transparent);
+      animation-duration: 1.9s;
     }
 
-    .system:hover::after,
-    .system:focus-visible::after,
-    .system.active::after {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1.18);
+    .system:hover .planet-aura,
+    .system:focus-visible .planet-aura,
+    .system.active .planet-aura {
+      opacity: 0.88;
+      transform: translate(-50%, -50%) scale(1.16);
+      animation-duration: 2.4s;
     }
 
-    .system.explored::before {
-      width: 9px;
-      height: 9px;
+    .system:hover .planet-ring,
+    .system:focus-visible .planet-ring,
+    .system.active .planet-ring {
+      opacity: calc(var(--ring-opacity) + 0.26);
+      transform: translate(-50%, -50%) rotate(calc(var(--ring-tilt) + 10deg)) scale(1.14);
     }
 
-    .system.locked::before {
-      color: rgba(188, 214, 255, 0.88);
+    .system.explored .planet-core {
+      width: calc(var(--planet-size) + 1px);
+      height: calc(var(--planet-size) + 1px);
+    }
+
+    .system.locked {
+      --planet-main: rgba(188, 214, 255, 0.9);
+      --planet-accent: rgba(230, 241, 255, 0.96);
+      --planet-shadow: rgba(164, 193, 255, 0.24);
+      --ring-opacity: 0.22;
+    }
+
+    .system.locked .planet-core {
       background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.92), rgba(135, 180, 255, 0.72) 68%, transparent 100%);
     }
 
-    .system.locked::after {
+    .system.locked .planet-ring {
       border-style: dashed;
     }
 
-    .system.unlocked::before {
-      box-shadow: 0 0 18px currentColor, 0 0 42px color-mix(in srgb, currentColor 56%, transparent);
+    .system.unlocked .planet-core {
+      box-shadow: 0 0 20px var(--planet-main), 0 0 44px color-mix(in srgb, var(--planet-main) 56%, transparent);
+    }
+
+    .system.planet-forest {
+      --planet-accent: #d6ffe8;
+      --ring-tilt: -16deg;
+    }
+
+    .system.planet-heritage {
+      --planet-accent: #fff0c8;
+      --ring-tilt: 18deg;
+    }
+
+    .system.planet-myth {
+      --planet-accent: #ffd3e8;
+      --ring-opacity: 0.46;
+      --ring-tilt: 9deg;
+    }
+
+    .system.planet-desert {
+      --planet-accent: #ffe3bc;
+      --ring-opacity: 0.54;
+      --ring-tilt: -9deg;
+    }
+
+    .system.planet-abyss {
+      --planet-accent: #d4f8ff;
+      --ring-opacity: 0.28;
+      --ring-tilt: -24deg;
+    }
+
+    .system.planet-imperial {
+      --planet-accent: #f4f7ff;
+      --ring-opacity: 0.34;
+      --ring-tilt: 2deg;
+    }
+
+    .system.planet-gateway {
+      --planet-accent: #efe0ff;
+      --ring-opacity: 0.62;
+      --ring-tilt: 24deg;
     }
 
     .cluster-stage .legend {
@@ -513,6 +677,21 @@
       background: rgba(7, 14, 27, 0.54);
       border: 1px solid rgba(154, 194, 255, 0.12);
       backdrop-filter: blur(14px);
+    }
+
+    .drag-tip {
+      position: absolute;
+      right: 22px;
+      bottom: 18px;
+      z-index: 4;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(7, 14, 27, 0.54);
+      border: 1px solid rgba(154, 194, 255, 0.12);
+      backdrop-filter: blur(14px);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.04em;
     }
 
     .legend-item {
@@ -535,6 +714,7 @@
       display: flex;
       flex-direction: column;
       gap: 18px;
+      overflow: auto;
     }
 
     .panel-title {
@@ -863,6 +1043,387 @@
       margin-top: 20px;
     }
 
+    .theme-modal .modal-card {
+      width: min(1040px, 100%);
+    }
+
+    .theme-modal-copy {
+      margin: 4px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .theme-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .theme-toolbar .modal-meta {
+      flex: 1;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .theme-card {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border-radius: 24px;
+      border: 1px solid rgba(164, 202, 255, 0.1);
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .theme-card:hover,
+    .theme-card:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(181, 216, 255, 0.24);
+      outline: none;
+    }
+
+    .theme-card.active {
+      border-color: rgba(194, 229, 255, 0.36);
+      background: rgba(255, 255, 255, 0.055);
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.24), 0 0 0 1px rgba(194, 229, 255, 0.08) inset;
+    }
+
+    .theme-card-preview {
+      position: relative;
+      height: 116px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 18% 18%, var(--preview-glow-a), transparent 32%),
+        radial-gradient(circle at 82% 22%, var(--preview-glow-b), transparent 28%),
+        radial-gradient(circle at 54% 70%, var(--preview-glow-c), transparent 30%),
+        linear-gradient(180deg, var(--preview-bg-0), var(--preview-bg-1) 45%, var(--preview-bg-end) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .theme-card-preview::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--preview-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--preview-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      opacity: 0.4;
+      mask-image: radial-gradient(circle at center, black 44%, transparent 92%);
+    }
+
+    .theme-card-preview::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: 58%;
+      height: 36%;
+      transform: translate(-50%, -50%) rotate(-8deg);
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse at center, var(--preview-stage-core), transparent 16%),
+        radial-gradient(ellipse at center, var(--preview-stage-cyan), transparent 36%),
+        radial-gradient(ellipse at 34% 56%, var(--preview-stage-violet), transparent 22%),
+        radial-gradient(ellipse at 66% 44%, var(--preview-stage-gold), transparent 22%);
+      filter: blur(8px);
+      opacity: 0.92;
+    }
+
+    .theme-card-orbit {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: 62%;
+      height: 34%;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transform: translate(-50%, -50%) rotate(-10deg);
+      opacity: 0.82;
+    }
+
+    .theme-card-core {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.98), var(--preview-brand-core) 44%, transparent 82%);
+      box-shadow: 0 0 18px var(--preview-brand-core);
+    }
+
+    .theme-card-panel {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      height: 26px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, var(--preview-panel-top), var(--preview-panel-bottom));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .theme-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .theme-card-title {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .theme-card-tag {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .theme-card-copy {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .theme-card-swatches {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .theme-card-swatches span {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18) inset;
+    }
+
+    .theme-active-label {
+      color: #dceeff;
+      font-size: 12px;
+    }
+
+    .insight-card {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(160, 197, 255, 0.08);
+    }
+
+    .insight-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .insight-copy {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 13px;
+    }
+
+    .mini-action {
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .preference-tags,
+    .meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .preference-tag,
+    .meta-tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #dceeff;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(164, 202, 255, 0.12);
+    }
+
+    .shard-list,
+    .route-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .shard-item,
+    .route-item {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(160, 197, 255, 0.08);
+    }
+
+    .shard-item strong,
+    .route-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .shard-item span,
+    .route-item span,
+    .shard-item p,
+    .route-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .shard-empty {
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px dashed rgba(171, 203, 255, 0.16);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .top-actions .nav-chip {
+      max-width: 180px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .modal-wide .modal-card {
+      width: min(980px, 100%);
+    }
+
+    .library-layout,
+    .route-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .library-sidebar,
+    .library-detail,
+    .route-sidebar,
+    .route-detail,
+    .auth-card {
+      padding: 18px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(164, 202, 255, 0.08);
+    }
+
+    .library-list {
+      display: grid;
+      gap: 10px;
+      max-height: 440px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .library-item {
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(164, 202, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .library-item:hover,
+    .library-item.active {
+      transform: translateY(-1px);
+      border-color: rgba(186, 220, 255, 0.22);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .library-item strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .library-item span,
+    .library-item p,
+    .library-detail p,
+    .library-detail li,
+    .route-detail p,
+    .route-detail li,
+    .route-sidebar p,
+    .auth-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .library-detail ul,
+    .route-detail ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .stats-grid-wide {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stats-grid-wide .metric {
+      min-height: 96px;
+    }
+
+    .auth-stack {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .auth-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .inline-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
     .secondary {
       background: rgba(255, 255, 255, 0.03);
     }
@@ -889,9 +1450,68 @@
       transform: translateY(0);
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 0.16; transform: scale(1); }
-      50% { opacity: 0.42; transform: scale(1.45); }
+    @keyframes planetPulse {
+      0%, 100% { filter: brightness(0.98); }
+      50% { filter: brightness(1.16); }
+    }
+
+    @keyframes backgroundDrift {
+      0% {
+        background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+      }
+      100% {
+        background-position: 8% -2%, -6% 4%, 6% 2%, 0% 0%;
+      }
+    }
+
+    @keyframes gridDrift {
+      0% { transform: translate3d(0, 0, 0); opacity: 0.34; }
+      50% { opacity: 0.42; }
+      100% { transform: translate3d(-42px, 10px, 0); opacity: 0.34; }
+    }
+
+    @keyframes vignettePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.9; }
+    }
+
+    @keyframes mistFloat {
+      0% {
+        transform: translate3d(-3.8%, 0.6%, 0) rotate(-12deg) scale(1.04, 0.7);
+        opacity: 0.86;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(4.2%, -0.9%, 0) rotate(-6deg) scale(1.12, 0.75);
+        opacity: 0.92;
+      }
+    }
+
+    @keyframes orbitSpin {
+      0% { transform: translate(-50%, -50%) rotate(-8deg); }
+      100% { transform: translate(-50%, -50%) rotate(352deg); }
+    }
+
+    @keyframes orbitSpinWide {
+      0% { transform: translate(-50%, -50%) rotate(14deg); }
+      100% { transform: translate(-50%, -50%) rotate(-346deg); }
+    }
+
+    @keyframes orbitSpinOuter {
+      0% { transform: translate(-50%, -50%) rotate(-16deg); }
+      100% { transform: translate(-50%, -50%) rotate(344deg); }
+    }
+
+    @keyframes auraDrift {
+      0%, 100% { transform: translate(-50%, -50%) scale(0.96); }
+      50% { transform: translate(-50%, -50%) scale(1.08); }
+    }
+
+    @keyframes ringSpin {
+      0% { transform: translate(-50%, -50%) rotate(var(--ring-tilt)); }
+      100% { transform: translate(-50%, -50%) rotate(calc(var(--ring-tilt) + 360deg)); }
     }
 
     @media (max-width: 1180px) {
@@ -935,7 +1555,10 @@
 
       .metric-row,
       .stat-grid,
-      .modal-grid {
+      .modal-grid,
+      .library-layout,
+      .route-layout,
+      .stats-grid-wide {
         grid-template-columns: 1fr;
       }
 
@@ -945,9 +1568,16 @@
 
       .cluster-stage .legend {
         left: 14px;
-        right: 14px;
         bottom: 14px;
         flex-wrap: wrap;
+        border-radius: 18px;
+      }
+
+      .drag-tip {
+        left: 14px;
+        right: 14px;
+        bottom: 74px;
+        text-align: center;
         border-radius: 18px;
       }
 
@@ -975,6 +1605,10 @@
         </div>
       </div>
       <div class="top-actions">
+        <button class="ghost nav-chip" id="authButton">观测员 · 已登录</button>
+        <button class="ghost" id="shardsButton">我的碎片</button>
+        <button class="ghost" id="routeButton">我的航迹</button>
+        <button class="ghost" id="paletteButton">配色预览</button>
         <button class="ghost" id="shuffleButton">切换航线</button>
         <button class="primary" id="focusButton">随机探索一个星系</button>
       </div>
@@ -1015,21 +1649,26 @@
       </section>
 
       <section class="cluster-stage" aria-label="银河星图 demo">
-        <div class="haze-layer">
-          <div class="haze haze-a"></div>
-          <div class="haze haze-b"></div>
-          <div class="haze haze-c"></div>
+        <div class="scene-viewport">
+          <div class="scene-3d" id="scene3d">
+            <canvas class="cluster-canvas" id="clusterCanvas"></canvas>
+            <div class="haze-layer">
+              <div class="haze haze-a"></div>
+              <div class="haze haze-b"></div>
+              <div class="haze haze-c"></div>
+            </div>
+            <div class="cluster-grid" id="clusterGrid"></div>
+            <div class="orbit-ring r1"></div>
+            <div class="orbit-ring r2"></div>
+            <div class="orbit-ring r3"></div>
+          </div>
         </div>
-        <div class="cluster-grid" id="clusterGrid"></div>
-        <div class="dust-layer" id="dustLayer"></div>
-        <div class="orbit-ring r1"></div>
-        <div class="orbit-ring r2"></div>
-        <div class="orbit-ring r3"></div>
         <div class="legend">
           <span class="legend-item"><span class="legend-dot" style="color: rgba(193, 217, 255, 0.92); background: rgba(193, 217, 255, 0.92);"></span>未知星系</span>
           <span class="legend-item"><span class="legend-dot" style="color: #86e7ff; background: #86e7ff;"></span>已探索星系</span>
           <span class="legend-item"><span class="legend-dot" style="color: #ffd17d; background: #ffd17d;"></span>已命名星系</span>
         </div>
+        <div class="drag-tip">按住拖拽旋转视角</div>
       </section>
 
       <aside class="panel info-panel">
@@ -1082,6 +1721,38 @@
 
         <div>
           <div class="panel-title">
+            <h3>今日推荐星球</h3>
+            <span class="panel-badge">偏好引导</span>
+          </div>
+          <div class="insight-card">
+            <strong id="recommendedTitle">敦煌飞天星球</strong>
+            <p class="insight-copy" id="recommendedCopy">系统会根据你最近探索与收藏过的题材，挑一个最适合继续深入的星系。</p>
+            <button class="mini-action" id="recommendedAction">沿推荐航线前往</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-title">
+            <h3>你的偏好趋势摘要</h3>
+            <span class="panel-badge" id="preferenceBadge">本地档案</span>
+          </div>
+          <div class="insight-card">
+            <strong id="preferenceHeadline">偏好轨迹正在形成</strong>
+            <p class="insight-copy" id="preferenceSummary">当前更像在广泛观察各个文明，系统会继续根据你的探索与收藏行为归纳兴趣方向。</p>
+            <div class="preference-tags" id="preferenceTags"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-title">
+            <h3>最近收藏的 3 条碎片</h3>
+            <span class="panel-badge">长期留存</span>
+          </div>
+          <div class="shard-list" id="recentShardsList"></div>
+        </div>
+
+        <div>
+          <div class="panel-title">
             <h3>近期活跃星区</h3>
             <span class="panel-badge">demo 数据</span>
           </div>
@@ -1105,18 +1776,149 @@
       </div>
       <div class="modal-grid">
         <section class="modal-section">
-          <h4>探索结果预览</h4>
+          <h4>本次探索卡</h4>
           <p id="modalBody"></p>
         </section>
         <section class="modal-section">
-          <h4>本次可见碎片</h4>
+          <h4>延伸碎片与标签</h4>
           <ul id="modalFragments"></ul>
+          <div class="meta-tags" id="modalTags"></div>
         </section>
       </div>
       <div class="modal-actions">
         <button class="primary" id="confirmExplore">确认探索结果</button>
         <button class="secondary" id="saveShard">收藏为星际碎片</button>
         <button class="ghost" id="nextExplore">换一个星系</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal theme-modal" id="paletteModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="closePaletteModal" aria-label="关闭配色预览">×</button>
+      <div class="modal-header">
+        <div>
+          <div class="modal-meta">
+            <span>5 套候选方案</span>
+            <span>点击即可实时套用</span>
+          </div>
+          <h3>配色预览舱</h3>
+          <p class="theme-modal-copy">先不讨论品牌定稿，只看这张首页在不同气质下是否更有吸引力。每张卡片都会直接改动当前页面背景、面板和星云氛围。</p>
+        </div>
+      </div>
+      <div class="theme-toolbar">
+        <div class="modal-meta">
+          <span id="themeStatus">当前方案：极夜冰海</span>
+        </div>
+        <button class="secondary" id="themeResetButton">恢复默认方案</button>
+      </div>
+      <div class="theme-grid" id="themeGrid"></div>
+    </div>
+  </div>
+
+  <div class="modal modal-wide" id="shardModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="closeShardModal" aria-label="关闭碎片库">×</button>
+      <div class="modal-header">
+        <div>
+          <div class="modal-meta">
+            <span id="shardCountMeta">0 条碎片</span>
+            <span>来源星系 · 标签 · 收藏时间</span>
+          </div>
+          <h3>星际碎片库</h3>
+          <p class="muted">把每次探索中真正想留下的东西，沉淀成可再次打开的个人知识资产。</p>
+        </div>
+      </div>
+      <div class="library-layout">
+        <section class="library-sidebar">
+          <div class="panel-title">
+            <h4>碎片列表</h4>
+            <span class="panel-badge">可回流星系</span>
+          </div>
+          <div class="library-list" id="shardLibraryList"></div>
+        </section>
+        <section class="library-detail">
+          <div class="panel-title">
+            <h4 id="shardDetailTitle">还没有收藏任何碎片</h4>
+            <span class="panel-badge" id="shardDetailMeta">等待收藏</span>
+          </div>
+          <p id="shardDetailHook">当你在探索弹层里点击“收藏为星际碎片”后，这里会开始记录来源星球、摘要和标签。</p>
+          <p id="shardDetailBody" style="margin-top:12px;"></p>
+          <ul id="shardDetailFragments"></ul>
+          <div class="meta-tags" id="shardDetailTags"></div>
+          <div class="modal-actions">
+            <button class="primary" id="shardReopenButton">再次查看这条碎片</button>
+            <button class="ghost" id="shardSourceButton">回到来源星球</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal modal-wide" id="routeModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="closeRouteModal" aria-label="关闭航迹页">×</button>
+      <div class="modal-header">
+        <div>
+          <div class="modal-meta">
+            <span id="routeStatusMeta">本地观测档案</span>
+            <span>探索、收藏、偏好趋势</span>
+          </div>
+          <h3>我的航迹</h3>
+          <p class="muted">这不是积分面板，而是你的兴趣在银河里逐渐留下的形状。</p>
+        </div>
+      </div>
+      <div class="stats-grid-wide">
+        <div class="metric"><strong id="routeExploreTotal">0</strong><span>累计探索次数</span></div>
+        <div class="metric"><strong id="routePlanetTotal">0</strong><span>已探索星球数</span></div>
+        <div class="metric"><strong id="routeShardTotal">0</strong><span>收藏碎片数</span></div>
+        <div class="metric"><strong id="routeLastExplore">--</strong><span>最近一次探索</span></div>
+      </div>
+      <div class="route-layout">
+        <section class="route-sidebar">
+          <div class="panel-title">
+            <h4>兴趣偏好区</h4>
+            <span class="panel-badge">基础识别</span>
+          </div>
+          <p id="routePreferenceSummary">你还在银河里广泛观察，偏好轮廓会随着确认探索和收藏行为逐渐收束。</p>
+          <div class="preference-tags" id="routeTopTags"></div>
+          <div class="panel-title" style="margin-top:18px;">
+            <h4>最常探索的星球</h4>
+          </div>
+          <div class="route-list" id="routeTopPlanets"></div>
+        </section>
+        <section class="route-detail">
+          <div class="panel-title">
+            <h4>最近航迹</h4>
+            <span class="panel-badge">继续探索</span>
+          </div>
+          <div class="route-list" id="routeRecentList"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="authModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="closeAuthModal" aria-label="关闭账号弹层">×</button>
+      <div class="modal-header">
+        <div>
+          <div class="modal-meta">
+            <span id="authStateMeta">本地观测档案已启用</span>
+          </div>
+          <h3>观测员身份</h3>
+          <p class="muted" id="authLead">当前原型使用本地观测档案模拟登录态，用来保存探索进度、碎片收藏和偏好轨迹。</p>
+        </div>
+      </div>
+      <div class="auth-card">
+        <div class="auth-stack">
+          <p id="authBodyCopy">你已经以“观测员”身份进入一期体验流程，可以直接探索、确认结果并收藏碎片。</p>
+          <p class="inline-note">正式产品里，这里会对应登录、注册和游客切换；当前原型先用本地模式验证留存链路。</p>
+        </div>
+        <div class="auth-actions">
+          <button class="primary" id="loginActionButton">启用本地观测档案</button>
+          <button class="ghost" id="logoutActionButton">切换到游客体验</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1307,11 +2109,511 @@
       }
     ];
 
+    const explorationCards = [
+      {
+        contentId: "craft-001",
+        title: "为什么有些纸一摸就知道不适合折纸",
+        hook: "纸看起来都差不多，但真正拿到手里，纤维、韧性和回弹会立刻暴露它是不是能被折的那一种。",
+        body: "折纸最怕的不是纸太薄，而是纸纤维方向太散、受力时没有稳定的回弹。好折的纸，在压出折痕后会顺着线安静地服帖下来；不好折的纸，表面可能很好看，但一翻折就会起毛、裂边，或者在关键转角处直接失去支撑。很多新手以为折纸只看厚薄，其实真正影响手感的，是纸张内部纤维怎么排列、表面有没有过度涂层，以及它在反复受力后还愿不愿意记住那条线。",
+        extraFragments: ["宣纸适合写和渗，不一定适合高强度反复折叠。", "牛皮纸看起来结实，但某些类型会因为纤维太硬而不易出细折。"],
+        planetId: "craft",
+        planetName: "手工星人星球",
+        civilization: "手工文明",
+        difficultyLevel: "L2",
+        topicTags: ["手工技艺", "手工材料"],
+        formatTags: ["冷知识", "器物观察"],
+        moodTags: ["温柔", "治愈"],
+        eraTags: ["跨时代"],
+        regionTags: [],
+        characterTags: [],
+        artifactTags: ["手工材料"],
+        readingTime: 85,
+        status: "published"
+      },
+      {
+        contentId: "intangible-001",
+        title: "为什么一些非遗必须靠手把手传，而不是看教材",
+        hook: "有些技艺真正关键的部分，根本不长在文字里，而长在手上、耳朵里和旁边人的那句提醒里。",
+        body: "很多非遗技艺并不只是知道步骤就能学会。教材能告诉你先做什么、后做什么，却很难告诉你手腕该多快、火候该停在哪一秒、材料什么时候已经从还能用变成再碰就废了。这些判断常常依赖触感、听觉、经验和师徒之间极细微的纠偏，所以非遗传承才会高度依赖手把手。它不是神秘化技术，而是因为某些知识本来就属于身体经验，只有在一起做的时候，才会真的被传下去。",
+        extraFragments: ["很多传统工艺的关键判断，师傅会用比喻而不是公式来教。", "会做和会教在非遗传承里并不是一回事。"],
+        planetId: "intangible",
+        planetName: "非遗星球",
+        civilization: "非遗文明",
+        difficultyLevel: "L2",
+        topicTags: ["非遗传承", "民间工艺"],
+        formatTags: ["误解纠偏", "起源溯源"],
+        moodTags: ["温柔", "静谧"],
+        eraTags: ["古代", "跨时代"],
+        regionTags: ["中原"],
+        characterTags: [],
+        artifactTags: [],
+        readingTime: 95,
+        status: "published"
+      },
+      {
+        contentId: "myth-001",
+        title: "山海经里的异兽，为什么总是半熟悉半陌生",
+        hook: "它们看起来像鸟、像鹿、像鱼、像人，却又总差一点点，那一点点陌生感，才是它们真正的力量。",
+        body: "山海经里的异兽很少是凭空创造出来的，它们往往会借用人们熟悉的动物轮廓，再在关键部位悄悄改写规则。比如多出一只眼、一张人脸、几条尾巴，或者让本该属于不同生命的特征拼接到同一个身体上。这样做的妙处在于，它既不会陌生到完全无法想象，也不会熟悉到失去神秘。古人需要的不是一只纯粹离奇的怪物，而是一种能承载象征、恐惧、边界感和自然想象的生命。",
+        extraFragments: ["异兽的拼接感常常意味着古人正在处理复杂的自然经验。", "很多异兽并不只负责吓人，还负责解释吉凶、地貌和秩序。"],
+        planetId: "myth",
+        planetName: "山海经异兽星球",
+        civilization: "上古神话文明",
+        difficultyLevel: "L2",
+        topicTags: ["上古神话", "异兽传说"],
+        formatTags: ["设定拆解", "冷知识"],
+        moodTags: ["瑰丽", "荒诞"],
+        eraTags: ["上古"],
+        regionTags: ["山海世界"],
+        characterTags: [],
+        artifactTags: ["异兽"],
+        readingTime: 100,
+        status: "published"
+      },
+      {
+        contentId: "dunhuang-001",
+        title: "飞天为什么更像漂浮，而不是飞翔",
+        hook: "你以为飞天的重点是飞，但画师真正迷恋的，可能是那种不受地面约束的失重感。",
+        body: "敦煌飞天最迷人的地方，并不是它像鸟一样会飞，而是它看起来像脱离了地心引力，却又没有完全脱离身体的柔软。画师会用飘带的方向、衣褶的流动、腰身的扭转和四肢的展开，把人物托进一种介于悬浮与舞动之间的状态。它并不追求真实飞行，而是在制造一种升腾的视觉经验。这种经验来自宗教想象，也来自古代审美对于轻、柔、流动和神性的共同偏爱。",
+        extraFragments: ["飘带常常比人物本身更先把飞的感觉画出来。", "不同时期的飞天，在服饰和体态上会有明显变化。"],
+        planetId: "dunhuang",
+        planetName: "敦煌飞天星球",
+        civilization: "丝路文明",
+        difficultyLevel: "L2",
+        topicTags: ["佛教艺术", "丝路交流"],
+        formatTags: ["图像细节", "设定拆解"],
+        moodTags: ["瑰丽", "神秘"],
+        eraTags: ["汉唐"],
+        regionTags: ["敦煌", "丝绸之路"],
+        characterTags: [],
+        artifactTags: ["壁画", "乐舞"],
+        readingTime: 92,
+        status: "published"
+      },
+      {
+        contentId: "cthulhu-001",
+        title: "克苏鲁神话真正可怕的不是怪物长相",
+        hook: "真正让人不舒服的，不是触手和巨眼，而是你突然发现，人类在这个宇宙里可能根本不重要。",
+        body: "很多人第一次接触克苏鲁神话，会先记住那些奇形怪状的外表，但它真正可怕的地方，其实是世界观。传统恐怖故事常常默认人类仍然站在舞台中央，哪怕被鬼怪袭击，故事也还是围着人转。克苏鲁神话却会把这种中心感直接抽掉。那些古老存在并不是专门来吓人的，它们只是太庞大、太古老、太不在乎人类，以至于我们连理解它们都很困难。恐惧因此不再来自追杀，而来自认知坍塌。",
+        extraFragments: ["不可名状本身就是一种叙事策略，故意不让你看清。", "理智值设定之所以有效，是因为它把认知崩塌做成了可以感受的后果。"],
+        planetId: "cthulhu",
+        planetName: "克苏鲁潮汐星球",
+        civilization: "宇宙恐惧文明",
+        difficultyLevel: "L2",
+        topicTags: ["宇宙恐惧", "文化母题"],
+        formatTags: ["误解纠偏", "设定拆解"],
+        moodTags: ["幽暗", "奇诡"],
+        eraTags: ["近现代"],
+        regionTags: ["深海"],
+        characterTags: [],
+        artifactTags: ["禁书"],
+        readingTime: 105,
+        status: "published"
+      },
+      {
+        contentId: "qin-001",
+        title: "统一文字到底统一了什么，没有统一什么",
+        hook: "统一文字听起来像一句很大的历史口号，但它真正改变的，往往是政令、记录和帝国运转的效率。",
+        body: "秦统一文字，不是把所有人说话的方式都变成一样，而是把官方书写和行政记录拉到一个更稳定的标准里。也就是说，它首先统一的是怎么写和怎么认，方便法令下达、文书往来、征调执行和跨地区管理，而不是让不同地方的人立刻说同一种语言。地方口音、日常说法、民间表达不会因为一纸制度就瞬间消失，但帝国需要一套能够跨地域流通的书写系统。",
+        extraFragments: ["书同文首先服务的是治理效率，而不是文化整齐划一。", "语言和文字从来不是完全一回事。"],
+        planetId: "qin",
+        planetName: "大秦观测站",
+        civilization: "帝国文明",
+        difficultyLevel: "L2",
+        topicTags: ["帝国制度", "误解纠偏"],
+        formatTags: ["制度解析", "冷知识"],
+        moodTags: ["冷峻", "宏大"],
+        eraTags: ["秦代"],
+        regionTags: ["中原"],
+        characterTags: ["帝王"],
+        artifactTags: [],
+        readingTime: 96,
+        status: "published"
+      },
+      {
+        contentId: "tang-001",
+        title: "为什么一个能听劝的皇帝会显得如此稀有",
+        hook: "稀有的也许不是听劝这件事本身，而是当权力已经够大时，仍愿意给不同意见留出真实空间。",
+        body: "历史上很多统治者都知道纳谏听起来很好，但真正困难的地方，从来不是口头上欢迎意见，而是能不能把不同意见纳入决策结构。权力越集中，反对意见越容易被理解成冒犯、拖延甚至威胁。贞观时期之所以常被反复提起，并不只是因为有敢说的人，更因为一度形成了一个让意见能够进入治理过程的机制和氛围。能听劝，并不代表没有冲突，而是代表这个系统允许冲突被消化、被转化，而不是被立刻压扁。",
+        extraFragments: ["能进谏的前提，往往是君臣之间存在最低限度的规则感。", "听劝本身也是一种制度能力，而不只是个人美德。"],
+        planetId: "tang",
+        planetName: "贞观星港",
+        civilization: "盛世文明",
+        difficultyLevel: "L2",
+        topicTags: ["历史人物", "帝国制度"],
+        formatTags: ["人物故事", "对照比较"],
+        moodTags: ["明亮", "开阔"],
+        eraTags: ["汉唐"],
+        regionTags: ["中原"],
+        characterTags: ["帝王"],
+        artifactTags: [],
+        readingTime: 98,
+        status: "published"
+      },
+      {
+        contentId: "fungi-001",
+        title: "真菌为什么更像地球上的隐秘基础设施",
+        hook: "你以为真菌只是长在角落里的蘑菇，但在很多地方，它更像一张默默支撑万物交换的地下网络。",
+        body: "真菌最容易被看见的部分，其实只是偶尔冒出来的果实。它更重要的存在方式，往往藏在土壤、树根和分解系统里。它们帮助有机物被拆解，帮助营养重新进入循环，还可能通过复杂的地下关系把不同植物卷进同一个交换网络。正因为它们不总是以醒目的形态出现，所以人类很容易低估它的地位。可如果把森林理解成一座城市，真菌更像底层管网、物流系统和维修工的混合体。",
+        extraFragments: ["我们常看到的是蘑菇，真正庞大的部分却藏在地下。", "分解并不只是腐烂，而是生态循环重新启动的方式。"],
+        planetId: "fungi",
+        planetName: "菌菇秘林星球",
+        civilization: "生命文明",
+        difficultyLevel: "L2",
+        topicTags: ["怪奇生命", "生态关系"],
+        formatTags: ["冷知识", "误解纠偏"],
+        moodTags: ["潮湿", "静谧"],
+        eraTags: ["跨时代"],
+        regionTags: ["森林"],
+        characterTags: [],
+        artifactTags: ["菌类"],
+        readingTime: 90,
+        status: "published"
+      },
+      {
+        contentId: "invention-001",
+        title: "为什么一项惊人的发明最后没有改变时代",
+        hook: "发明厉不厉害，和它能不能改变世界，并不是一回事，很多时候，时代根本接不住它。",
+        body: "我们回看历史上的某些装置或技术设想，常会惊讶地觉得它们太超前了。但超前并不自动等于有效。一个发明要真正改变时代，除了聪明本身，还需要材料条件、传播路径、使用场景、维护成本和社会需求同时配合。少一样，它都可能只作为奇迹短暂出现，然后被埋进历史角落。所以很多被称作失落发明的东西，并不是不够好，而是它们出生时，没有遇到足够大的土壤。",
+        extraFragments: ["技术史常常不是线性前进，而是反复出现和中断。", "有些发明先输给的不是技术，而是成本和场景。"],
+        planetId: "invention",
+        planetName: "失落发明星球",
+        civilization: "发明文明",
+        difficultyLevel: "L2",
+        topicTags: ["奇妙发明", "起源溯源"],
+        formatTags: ["对照比较", "误解纠偏"],
+        moodTags: ["神秘", "宏大"],
+        eraTags: ["古代", "跨时代"],
+        regionTags: [],
+        characterTags: [],
+        artifactTags: ["机械装置"],
+        readingTime: 94,
+        status: "published"
+      },
+      {
+        contentId: "otherworld-001",
+        title: "为什么不同文明都爱发明通往别处的门",
+        hook: "门这种东西的迷人之处，从来不只是能过去，而是它让人相信，世界也许并不只有眼前这一层。",
+        body: "不同文明里几乎都能找到通往别处的门：山洞、古井、树林深处、海面裂缝、梦境入口、神殿背后的暗门。它们表面不同，功能却很相似，都是在现实世界里切开一条缝，让人有机会进入另一套规则。人类之所以反复发明这种设定，也许是因为我们天然不满足于只有一个世界。门让未知变得可想象，让秩序之外的空间有了具体形状，也让很多关于死亡、命运、冒险和自我变化的故事有了入口。",
+        extraFragments: ["门常常是神话和奇幻作品里最节省解释成本的设定。", "门的另一边未必更自由，但一定意味着规则变化。"],
+        planetId: "otherworld",
+        planetName: "异世界转运站",
+        civilization: "多元宇宙文明",
+        difficultyLevel: "L2",
+        topicTags: ["文化母题", "世界构建"],
+        formatTags: ["对照比较", "起源溯源"],
+        moodTags: ["神秘", "开阔"],
+        eraTags: ["跨时代", "架空时代"],
+        regionTags: ["多元宇宙"],
+        characterTags: ["英雄"],
+        artifactTags: [],
+        readingTime: 102,
+        status: "published"
+      }
+    ];
+
+    const defaultThemeId = "deep-ice";
+    const themes = [
+      {
+        id: "deep-ice",
+        name: "极夜冰海",
+        tag: "冷冽通透",
+        description: "更像深海上方的极夜极光，理性、清透、带一点高维感。",
+        swatches: ["#7ee4ff", "#d5f7ff", "#7db8ff", "#ffd69a"],
+        variables: {
+          "--bg-0": "#07111f",
+          "--bg-1": "#0b1730",
+          "--bg-2": "#142449",
+          "--bg-end": "#050b18",
+          "--bg-glow-a": "rgba(50, 96, 182, 0.28)",
+          "--bg-glow-b": "rgba(255, 176, 112, 0.15)",
+          "--bg-glow-c": "rgba(107, 195, 255, 0.18)",
+          "--text": "#eef4ff",
+          "--muted": "rgba(219, 233, 255, 0.68)",
+          "--line": "rgba(170, 196, 255, 0.14)",
+          "--panel-top": "rgba(11, 20, 41, 0.7)",
+          "--panel-bottom": "rgba(7, 13, 27, 0.48)",
+          "--panel-sheen": "rgba(255, 255, 255, 0.05)",
+          "--cyan": "#86e7ff",
+          "--gold": "#ffd17d",
+          "--rose": "#ff9dcc",
+          "--mint": "#9ce7cb",
+          "--orange": "#ffb48a",
+          "--grid-line": "rgba(255, 255, 255, 0.02)",
+          "--vignette": "rgba(0, 0, 0, 0.54)",
+          "--mist-core": "rgba(255, 248, 223, 0.16)",
+          "--mist-cyan": "rgba(141, 221, 255, 0.17)",
+          "--mist-violet": "rgba(143, 112, 255, 0.13)",
+          "--mist-gold": "rgba(255, 190, 117, 0.13)",
+          "--mist-mint": "rgba(138, 239, 218, 0.1)",
+          "--brand-core": "rgba(137, 224, 255, 0.86)",
+          "--brand-ring": "rgba(35, 120, 255, 0.12)",
+          "--brand-warm": "rgba(255, 204, 138, 0.42)",
+          "--brand-shell": "#09172c",
+          "--button-a": "rgba(110, 230, 255, 0.22)",
+          "--button-b": "rgba(115, 136, 255, 0.22)",
+          "--eyebrow-border": "rgba(161, 209, 255, 0.18)",
+          "--eyebrow-bg": "rgba(125, 180, 255, 0.08)",
+          "--eyebrow-text": "#d7ecff",
+          "--stage-core": "rgba(255, 247, 216, 0.14)",
+          "--stage-cyan": "rgba(161, 224, 255, 0.14)",
+          "--stage-violet": "rgba(168, 132, 255, 0.12)",
+          "--stage-gold": "rgba(255, 190, 117, 0.12)",
+          "--stage-shell": "rgba(11, 18, 37, 0.52)",
+          "--stage-floor": "rgba(3, 7, 16, 0.3)",
+          "--stage-before-core": "rgba(255, 252, 240, 0.16)",
+          "--stage-before-cyan": "rgba(137, 199, 255, 0.14)",
+          "--stage-before-violet": "rgba(150, 114, 255, 0.12)",
+          "--stage-before-gold": "rgba(255, 181, 109, 0.12)",
+          "--stage-after-cyan": "rgba(118, 211, 255, 0.08)",
+          "--stage-after-core": "rgba(255, 255, 255, 0.09)",
+          "--stage-after-gold": "rgba(255, 208, 142, 0.08)",
+          "--stage-after-blue": "rgba(124, 167, 255, 0.08)"
+        }
+      },
+      {
+        id: "amber-dust",
+        name: "琥珀星尘",
+        tag: "暖金沉浸",
+        description: "把首页往遗迹、黄昏、收藏感拉，整体更有内容产品和陈列感。",
+        swatches: ["#ffc774", "#ffdcb4", "#ff9f68", "#7ecbff"],
+        variables: {
+          "--bg-0": "#160f0a",
+          "--bg-1": "#2d1b12",
+          "--bg-2": "#4d2c1b",
+          "--bg-end": "#0c0908",
+          "--bg-glow-a": "rgba(255, 161, 91, 0.24)",
+          "--bg-glow-b": "rgba(255, 216, 152, 0.16)",
+          "--bg-glow-c": "rgba(122, 191, 255, 0.14)",
+          "--text": "#fff4e7",
+          "--muted": "rgba(255, 229, 198, 0.68)",
+          "--line": "rgba(255, 211, 156, 0.16)",
+          "--panel-top": "rgba(44, 27, 18, 0.76)",
+          "--panel-bottom": "rgba(20, 12, 10, 0.56)",
+          "--panel-sheen": "rgba(255, 236, 214, 0.06)",
+          "--cyan": "#7ecbff",
+          "--gold": "#ffc774",
+          "--rose": "#ffba8d",
+          "--mint": "#efd6a4",
+          "--orange": "#ff9f68",
+          "--grid-line": "rgba(255, 241, 220, 0.024)",
+          "--vignette": "rgba(7, 4, 3, 0.6)",
+          "--mist-core": "rgba(255, 233, 186, 0.18)",
+          "--mist-cyan": "rgba(126, 203, 255, 0.11)",
+          "--mist-violet": "rgba(177, 135, 110, 0.1)",
+          "--mist-gold": "rgba(255, 177, 92, 0.18)",
+          "--mist-mint": "rgba(255, 218, 154, 0.1)",
+          "--brand-core": "rgba(255, 212, 138, 0.88)",
+          "--brand-ring": "rgba(255, 143, 66, 0.18)",
+          "--brand-warm": "rgba(126, 203, 255, 0.24)",
+          "--brand-shell": "#1c120d",
+          "--button-a": "rgba(255, 199, 116, 0.24)",
+          "--button-b": "rgba(255, 128, 78, 0.18)",
+          "--eyebrow-border": "rgba(255, 211, 156, 0.2)",
+          "--eyebrow-bg": "rgba(255, 192, 108, 0.08)",
+          "--eyebrow-text": "#ffe9cc",
+          "--stage-core": "rgba(255, 234, 187, 0.16)",
+          "--stage-cyan": "rgba(125, 202, 255, 0.11)",
+          "--stage-violet": "rgba(190, 120, 85, 0.1)",
+          "--stage-gold": "rgba(255, 176, 96, 0.16)",
+          "--stage-shell": "rgba(34, 22, 15, 0.6)",
+          "--stage-floor": "rgba(14, 10, 8, 0.34)",
+          "--stage-before-core": "rgba(255, 245, 223, 0.16)",
+          "--stage-before-cyan": "rgba(126, 203, 255, 0.1)",
+          "--stage-before-violet": "rgba(192, 126, 89, 0.12)",
+          "--stage-before-gold": "rgba(255, 186, 105, 0.14)",
+          "--stage-after-cyan": "rgba(126, 203, 255, 0.06)",
+          "--stage-after-core": "rgba(255, 245, 225, 0.1)",
+          "--stage-after-gold": "rgba(255, 187, 105, 0.1)",
+          "--stage-after-blue": "rgba(255, 134, 90, 0.08)"
+        }
+      },
+      {
+        id: "violet-fog",
+        name: "紫雾禁区",
+        tag: "神秘偏锋",
+        description: "更偏幻想和危险感，页面会有明显的禁区气质，适合做更强个性的方向测试。",
+        swatches: ["#c998ff", "#ff8ac2", "#8ce7ff", "#ffd5f2"],
+        variables: {
+          "--bg-0": "#120919",
+          "--bg-1": "#1c1031",
+          "--bg-2": "#30194d",
+          "--bg-end": "#09040f",
+          "--bg-glow-a": "rgba(150, 86, 255, 0.28)",
+          "--bg-glow-b": "rgba(255, 113, 179, 0.15)",
+          "--bg-glow-c": "rgba(124, 231, 255, 0.14)",
+          "--text": "#f7efff",
+          "--muted": "rgba(231, 213, 255, 0.7)",
+          "--line": "rgba(211, 175, 255, 0.16)",
+          "--panel-top": "rgba(31, 18, 52, 0.74)",
+          "--panel-bottom": "rgba(16, 9, 25, 0.56)",
+          "--panel-sheen": "rgba(255, 255, 255, 0.055)",
+          "--cyan": "#8ce7ff",
+          "--gold": "#ffd1eb",
+          "--rose": "#ff8ac2",
+          "--mint": "#c998ff",
+          "--orange": "#ffb0e1",
+          "--grid-line": "rgba(255, 234, 255, 0.022)",
+          "--vignette": "rgba(2, 0, 7, 0.62)",
+          "--mist-core": "rgba(255, 235, 255, 0.14)",
+          "--mist-cyan": "rgba(140, 231, 255, 0.15)",
+          "--mist-violet": "rgba(182, 112, 255, 0.18)",
+          "--mist-gold": "rgba(255, 154, 210, 0.12)",
+          "--mist-mint": "rgba(215, 153, 255, 0.12)",
+          "--brand-core": "rgba(206, 153, 255, 0.9)",
+          "--brand-ring": "rgba(121, 71, 255, 0.18)",
+          "--brand-warm": "rgba(255, 138, 194, 0.3)",
+          "--brand-shell": "#140b21",
+          "--button-a": "rgba(201, 152, 255, 0.24)",
+          "--button-b": "rgba(255, 138, 194, 0.18)",
+          "--eyebrow-border": "rgba(211, 175, 255, 0.2)",
+          "--eyebrow-bg": "rgba(174, 122, 255, 0.08)",
+          "--eyebrow-text": "#f1deff",
+          "--stage-core": "rgba(255, 236, 253, 0.12)",
+          "--stage-cyan": "rgba(140, 231, 255, 0.12)",
+          "--stage-violet": "rgba(193, 132, 255, 0.18)",
+          "--stage-gold": "rgba(255, 138, 194, 0.12)",
+          "--stage-shell": "rgba(24, 13, 40, 0.58)",
+          "--stage-floor": "rgba(10, 5, 18, 0.34)",
+          "--stage-before-core": "rgba(255, 246, 255, 0.14)",
+          "--stage-before-cyan": "rgba(140, 231, 255, 0.12)",
+          "--stage-before-violet": "rgba(193, 132, 255, 0.16)",
+          "--stage-before-gold": "rgba(255, 145, 202, 0.12)",
+          "--stage-after-cyan": "rgba(140, 231, 255, 0.07)",
+          "--stage-after-core": "rgba(255, 247, 255, 0.09)",
+          "--stage-after-gold": "rgba(255, 160, 212, 0.08)",
+          "--stage-after-blue": "rgba(186, 130, 255, 0.09)"
+        }
+      },
+      {
+        id: "turquoise-ruins",
+        name: "绿松石遗迹",
+        tag: "考古奇观",
+        description: "更接近古文明遗址和科技遗物混在一起的气质，神秘但不阴冷。",
+        swatches: ["#62ead6", "#9de9ff", "#d7c77a", "#64b7ff"],
+        variables: {
+          "--bg-0": "#051515",
+          "--bg-1": "#0a2626",
+          "--bg-2": "#113b39",
+          "--bg-end": "#041010",
+          "--bg-glow-a": "rgba(80, 215, 201, 0.24)",
+          "--bg-glow-b": "rgba(215, 199, 122, 0.14)",
+          "--bg-glow-c": "rgba(100, 183, 255, 0.15)",
+          "--text": "#ecfff9",
+          "--muted": "rgba(204, 239, 232, 0.68)",
+          "--line": "rgba(138, 226, 212, 0.16)",
+          "--panel-top": "rgba(10, 37, 36, 0.76)",
+          "--panel-bottom": "rgba(6, 21, 21, 0.56)",
+          "--panel-sheen": "rgba(255, 255, 255, 0.055)",
+          "--cyan": "#9de9ff",
+          "--gold": "#d7c77a",
+          "--rose": "#7ce4d7",
+          "--mint": "#62ead6",
+          "--orange": "#a8f2d0",
+          "--grid-line": "rgba(234, 255, 249, 0.02)",
+          "--vignette": "rgba(0, 8, 8, 0.58)",
+          "--mist-core": "rgba(230, 255, 246, 0.14)",
+          "--mist-cyan": "rgba(100, 183, 255, 0.11)",
+          "--mist-violet": "rgba(98, 234, 214, 0.14)",
+          "--mist-gold": "rgba(215, 199, 122, 0.12)",
+          "--mist-mint": "rgba(116, 245, 228, 0.11)",
+          "--brand-core": "rgba(98, 234, 214, 0.88)",
+          "--brand-ring": "rgba(45, 140, 129, 0.16)",
+          "--brand-warm": "rgba(215, 199, 122, 0.22)",
+          "--brand-shell": "#071a1a",
+          "--button-a": "rgba(98, 234, 214, 0.24)",
+          "--button-b": "rgba(100, 183, 255, 0.18)",
+          "--eyebrow-border": "rgba(138, 226, 212, 0.2)",
+          "--eyebrow-bg": "rgba(90, 224, 207, 0.08)",
+          "--eyebrow-text": "#d8fff5",
+          "--stage-core": "rgba(223, 255, 244, 0.14)",
+          "--stage-cyan": "rgba(120, 232, 255, 0.12)",
+          "--stage-violet": "rgba(96, 232, 213, 0.14)",
+          "--stage-gold": "rgba(215, 199, 122, 0.11)",
+          "--stage-shell": "rgba(9, 31, 29, 0.6)",
+          "--stage-floor": "rgba(4, 14, 14, 0.34)",
+          "--stage-before-core": "rgba(241, 255, 248, 0.14)",
+          "--stage-before-cyan": "rgba(120, 232, 255, 0.12)",
+          "--stage-before-violet": "rgba(96, 232, 213, 0.12)",
+          "--stage-before-gold": "rgba(215, 199, 122, 0.1)",
+          "--stage-after-cyan": "rgba(120, 232, 255, 0.07)",
+          "--stage-after-core": "rgba(247, 255, 251, 0.08)",
+          "--stage-after-gold": "rgba(215, 199, 122, 0.08)",
+          "--stage-after-blue": "rgba(98, 234, 214, 0.08)"
+        }
+      },
+      {
+        id: "rose-harbor",
+        name: "玫瑰星港",
+        tag: "情绪更强",
+        description: "偏内容消费产品的吸引力方向，柔和但不甜，适合验证更有记忆点的首页印象。",
+        swatches: ["#ff8ea8", "#ffd8df", "#8bdfff", "#ffc686"],
+        variables: {
+          "--bg-0": "#130b16",
+          "--bg-1": "#22111f",
+          "--bg-2": "#3b1c2e",
+          "--bg-end": "#08060a",
+          "--bg-glow-a": "rgba(255, 142, 168, 0.22)",
+          "--bg-glow-b": "rgba(255, 198, 134, 0.14)",
+          "--bg-glow-c": "rgba(139, 223, 255, 0.16)",
+          "--text": "#fff2f5",
+          "--muted": "rgba(243, 218, 226, 0.7)",
+          "--line": "rgba(255, 180, 200, 0.16)",
+          "--panel-top": "rgba(35, 18, 31, 0.76)",
+          "--panel-bottom": "rgba(18, 10, 15, 0.56)",
+          "--panel-sheen": "rgba(255, 255, 255, 0.06)",
+          "--cyan": "#8bdfff",
+          "--gold": "#ffc686",
+          "--rose": "#ff8ea8",
+          "--mint": "#ffd8df",
+          "--orange": "#ffb69e",
+          "--grid-line": "rgba(255, 240, 244, 0.022)",
+          "--vignette": "rgba(7, 3, 6, 0.62)",
+          "--mist-core": "rgba(255, 236, 240, 0.15)",
+          "--mist-cyan": "rgba(139, 223, 255, 0.13)",
+          "--mist-violet": "rgba(255, 142, 168, 0.16)",
+          "--mist-gold": "rgba(255, 198, 134, 0.12)",
+          "--mist-mint": "rgba(255, 216, 223, 0.12)",
+          "--brand-core": "rgba(255, 142, 168, 0.86)",
+          "--brand-ring": "rgba(255, 95, 150, 0.16)",
+          "--brand-warm": "rgba(139, 223, 255, 0.24)",
+          "--brand-shell": "#180d15",
+          "--button-a": "rgba(255, 142, 168, 0.22)",
+          "--button-b": "rgba(139, 223, 255, 0.18)",
+          "--eyebrow-border": "rgba(255, 180, 200, 0.2)",
+          "--eyebrow-bg": "rgba(255, 142, 168, 0.08)",
+          "--eyebrow-text": "#ffe7ee",
+          "--stage-core": "rgba(255, 238, 242, 0.13)",
+          "--stage-cyan": "rgba(139, 223, 255, 0.12)",
+          "--stage-violet": "rgba(255, 142, 168, 0.14)",
+          "--stage-gold": "rgba(255, 198, 134, 0.11)",
+          "--stage-shell": "rgba(31, 16, 27, 0.58)",
+          "--stage-floor": "rgba(12, 7, 11, 0.34)",
+          "--stage-before-core": "rgba(255, 247, 249, 0.14)",
+          "--stage-before-cyan": "rgba(139, 223, 255, 0.12)",
+          "--stage-before-violet": "rgba(255, 142, 168, 0.13)",
+          "--stage-before-gold": "rgba(255, 198, 134, 0.1)",
+          "--stage-after-cyan": "rgba(139, 223, 255, 0.07)",
+          "--stage-after-core": "rgba(255, 247, 249, 0.09)",
+          "--stage-after-gold": "rgba(255, 198, 134, 0.08)",
+          "--stage-after-blue": "rgba(255, 142, 168, 0.08)"
+        }
+      }
+    ];
+
     const clusterGrid = document.getElementById("clusterGrid");
-    const dustLayer = document.getElementById("dustLayer");
+    const clusterStage = document.querySelector(".cluster-stage");
+    const clusterCanvas = document.getElementById("clusterCanvas");
+    const clusterContext = clusterCanvas.getContext("2d");
     const tooltip = document.getElementById("tooltip");
     const modal = document.getElementById("modal");
+    const paletteModal = document.getElementById("paletteModal");
     const toast = document.getElementById("toast");
+    const themeGrid = document.getElementById("themeGrid");
+    const themeStatus = document.getElementById("themeStatus");
+    const shardModal = document.getElementById("shardModal");
+    const routeModal = document.getElementById("routeModal");
+    const authModal = document.getElementById("authModal");
 
     const selectedTitle = document.getElementById("selectedTitle");
     const selectedSubtitle = document.getElementById("selectedSubtitle");
@@ -1330,14 +2632,380 @@
     const modalBody = document.getElementById("modalBody");
     const modalFragments = document.getElementById("modalFragments");
     const modalMeta = document.getElementById("modalMeta");
+    const modalTags = document.getElementById("modalTags");
+
+    const authButton = document.getElementById("authButton");
+    const recommendedTitle = document.getElementById("recommendedTitle");
+    const recommendedCopy = document.getElementById("recommendedCopy");
+    const recommendedAction = document.getElementById("recommendedAction");
+    const preferenceBadge = document.getElementById("preferenceBadge");
+    const preferenceHeadline = document.getElementById("preferenceHeadline");
+    const preferenceSummary = document.getElementById("preferenceSummary");
+    const preferenceTags = document.getElementById("preferenceTags");
+    const recentShardsList = document.getElementById("recentShardsList");
+
+    const shardCountMeta = document.getElementById("shardCountMeta");
+    const shardLibraryList = document.getElementById("shardLibraryList");
+    const shardDetailTitle = document.getElementById("shardDetailTitle");
+    const shardDetailMeta = document.getElementById("shardDetailMeta");
+    const shardDetailHook = document.getElementById("shardDetailHook");
+    const shardDetailBody = document.getElementById("shardDetailBody");
+    const shardDetailFragments = document.getElementById("shardDetailFragments");
+    const shardDetailTags = document.getElementById("shardDetailTags");
+    const shardReopenButton = document.getElementById("shardReopenButton");
+    const shardSourceButton = document.getElementById("shardSourceButton");
+
+    const routeStatusMeta = document.getElementById("routeStatusMeta");
+    const routeExploreTotal = document.getElementById("routeExploreTotal");
+    const routePlanetTotal = document.getElementById("routePlanetTotal");
+    const routeShardTotal = document.getElementById("routeShardTotal");
+    const routeLastExplore = document.getElementById("routeLastExplore");
+    const routePreferenceSummary = document.getElementById("routePreferenceSummary");
+    const routeTopTags = document.getElementById("routeTopTags");
+    const routeTopPlanets = document.getElementById("routeTopPlanets");
+    const routeRecentList = document.getElementById("routeRecentList");
+
+    const authStateMeta = document.getElementById("authStateMeta");
+    const authLead = document.getElementById("authLead");
+    const authBodyCopy = document.getElementById("authBodyCopy");
+    const loginActionButton = document.getElementById("loginActionButton");
+    const logoutActionButton = document.getElementById("logoutActionButton");
 
     let activeSystemId = systems[0].id;
+    let currentThemeId = defaultThemeId;
+    let currentExploration = null;
+    let selectedShardId = null;
+
+    const cardsByPlanet = explorationCards.reduce((accumulator, card) => {
+      if (!accumulator[card.planetId]) {
+        accumulator[card.planetId] = [];
+      }
+      accumulator[card.planetId].push(card);
+      return accumulator;
+    }, {});
+
+    const storageKey = "cloud-atlas-demo-profile-v1";
+    const systemSeedState = systems.reduce((accumulator, system) => {
+      accumulator[system.id] = {
+        progress: system.progress,
+        exploredTimes: system.exploredTimes,
+        status: system.status
+      };
+      return accumulator;
+    }, {});
+
+    function cloneData(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function createDefaultAppState() {
+      return {
+        auth: {
+          loggedIn: true,
+          userName: "观测员"
+        },
+        systems: cloneData(systemSeedState),
+        shards: [],
+        interactions: {
+          clickedSystems: {},
+          openedCards: {},
+          tagScores: {},
+          planetScores: {},
+          recentExplores: [],
+          lastExploredAt: null,
+          confirmCount: 0,
+          saveCount: 0
+        }
+      };
+    }
+
+    function loadAppState() {
+      const defaults = createDefaultAppState();
+
+      try {
+        const raw = window.localStorage.getItem(storageKey);
+        if (!raw) {
+          return defaults;
+        }
+
+        const saved = JSON.parse(raw);
+        const mergedSystems = cloneData(systemSeedState);
+        Object.keys(mergedSystems).forEach((systemId) => {
+          if (saved.systems && saved.systems[systemId]) {
+            mergedSystems[systemId] = {
+              ...mergedSystems[systemId],
+              ...saved.systems[systemId]
+            };
+          }
+        });
+
+        return {
+          auth: {
+            ...defaults.auth,
+            ...(saved.auth || {})
+          },
+          systems: mergedSystems,
+          shards: Array.isArray(saved.shards) ? saved.shards : [],
+          interactions: {
+            ...defaults.interactions,
+            ...(saved.interactions || {}),
+            clickedSystems: {
+              ...defaults.interactions.clickedSystems,
+              ...((saved.interactions && saved.interactions.clickedSystems) || {})
+            },
+            openedCards: {
+              ...defaults.interactions.openedCards,
+              ...((saved.interactions && saved.interactions.openedCards) || {})
+            },
+            tagScores: {
+              ...defaults.interactions.tagScores,
+              ...((saved.interactions && saved.interactions.tagScores) || {})
+            },
+            planetScores: {
+              ...defaults.interactions.planetScores,
+              ...((saved.interactions && saved.interactions.planetScores) || {})
+            },
+            recentExplores: Array.isArray(saved.interactions && saved.interactions.recentExplores) ? saved.interactions.recentExplores : [],
+            lastExploredAt: saved.interactions && saved.interactions.lastExploredAt ? saved.interactions.lastExploredAt : null
+          }
+        };
+      } catch (error) {
+        return defaults;
+      }
+    }
+
+    let appState = loadAppState();
+
+    function persistAppState() {
+      window.localStorage.setItem(storageKey, JSON.stringify(appState));
+    }
+
+    function syncSystemsFromState() {
+      systems.forEach((system) => {
+        const systemState = appState.systems[system.id];
+        if (!systemState) {
+          return;
+        }
+        system.progress = systemState.progress;
+        system.exploredTimes = systemState.exploredTimes;
+        system.status = systemState.status;
+      });
+    }
+
+    function updateStoredSystem(system) {
+      appState.systems[system.id] = {
+        progress: system.progress,
+        exploredTimes: system.exploredTimes,
+        status: system.status
+      };
+    }
+
+    function incrementCounter(record, key, amount = 1) {
+      record[key] = (record[key] || 0) + amount;
+    }
+
+    function formatTimeLabel(isoString) {
+      if (!isoString) {
+        return "--";
+      }
+      const date = new Date(isoString);
+      return `${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    }
+
+    function releaseModalFocus(container) {
+      const activeElement = document.activeElement;
+      if (activeElement instanceof HTMLElement && container.contains(activeElement)) {
+        activeElement.blur();
+      }
+    }
+
+    function getSystemById(systemId) {
+      return systems.find((system) => system.id === systemId) || systems[0];
+    }
+
+    function getCardById(contentId) {
+      return explorationCards.find((card) => card.contentId === contentId) || null;
+    }
+
+    function getCardForSystem(system, preferredContentId) {
+      const cards = cardsByPlanet[system.id] || [];
+      if (preferredContentId) {
+        return cards.find((card) => card.contentId === preferredContentId) || cards[0] || null;
+      }
+      if (cards.length === 0) {
+        return null;
+      }
+      const index = Math.min(cards.length - 1, Math.max(0, system.exploredTimes % cards.length));
+      return cards[index];
+    }
+
+    function isSavedShard(contentId) {
+      return appState.shards.some((shard) => shard.contentId === contentId);
+    }
+
+    function requireLogin(actionLabel) {
+      if (appState.auth.loggedIn) {
+        return true;
+      }
+      openAuthModal(`${actionLabel}需要先启用本地观测档案，这样探索进度、碎片收藏和偏好轨迹才能被记录下来。`);
+      return false;
+    }
+
+    function registerPreference(card, weight) {
+      card.topicTags.forEach((tag) => {
+        incrementCounter(appState.interactions.tagScores, tag, weight);
+      });
+      card.moodTags.forEach((tag) => {
+        incrementCounter(appState.interactions.tagScores, tag, weight * 0.8);
+      });
+      incrementCounter(appState.interactions.planetScores, card.planetId, weight + 0.4);
+    }
+
+    function getTopEntries(record, limit = 3) {
+      return Object.entries(record)
+        .sort((left, right) => right[1] - left[1])
+        .slice(0, limit);
+    }
+
+    function buildPreferenceSummary() {
+      const topTags = getTopEntries(appState.interactions.tagScores, 3);
+      const topPlanets = getTopEntries(appState.interactions.planetScores, 3);
+
+      if (topTags.length === 0 && topPlanets.length === 0) {
+        return {
+          headline: "偏好轨迹正在形成",
+          summary: "当前更像在广泛观察各个文明，系统会继续根据你的探索与收藏行为归纳兴趣方向。",
+          tags: []
+        };
+      }
+
+      const primaryPlanet = topPlanets.length > 0 ? getSystemById(topPlanets[0][0]).name : "银河边界";
+      const primaryTag = topTags.length > 0 ? topTags[0][0] : "探索行为";
+      const secondaryTag = topTags.length > 1 ? topTags[1][0] : "未知感";
+
+      return {
+        headline: `你正在向「${primaryPlanet}」这类文明靠拢`,
+        summary: `最近的探索更容易被「${primaryTag}」和「${secondaryTag}」这类题材吸引，系统会优先把相邻气质的星球推到你面前。`,
+        tags: topTags.map(([tag]) => tag)
+      };
+    }
+
+    function trackRecentExplore(system, card) {
+      const item = {
+        systemId: system.id,
+        contentId: card.contentId,
+        title: card.title,
+        savedAt: new Date().toISOString(),
+        hook: card.hook
+      };
+      appState.interactions.recentExplores = [item, ...appState.interactions.recentExplores.filter((entry) => entry.contentId !== item.contentId)].slice(0, 8);
+      appState.interactions.lastExploredAt = item.savedAt;
+    }
 
     const statusText = {
       locked: "未探索",
       explored: "已探索",
       unlocked: "已命名"
     };
+
+    const systemThemeProfiles = {
+      craft: {
+        themeId: "turquoise-ruins",
+        label: "手工材料与自然质感"
+      },
+      intangible: {
+        themeId: "amber-dust",
+        label: "活态传承与人间温度"
+      },
+      myth: {
+        themeId: "violet-fog",
+        label: "边界神话与未知感"
+      },
+      dunhuang: {
+        themeId: "amber-dust",
+        label: "壁光、流沙与丝路华彩"
+      },
+      cthulhu: {
+        themeId: "deep-ice",
+        label: "深海恐惧与宇宙寒意"
+      },
+      qin: {
+        themeId: "deep-ice",
+        label: "冷峻秩序与帝国骨架"
+      },
+      tang: {
+        themeId: "rose-harbor",
+        label: "开放盛世与明亮港口"
+      },
+      fungi: {
+        themeId: "turquoise-ruins",
+        label: "潮湿秘林与地下网络"
+      },
+      invention: {
+        themeId: "amber-dust",
+        label: "遗迹机械与古怪装置"
+      },
+      otherworld: {
+        themeId: "violet-fog",
+        label: "异界门扉与规则切换"
+      }
+    };
+
+    const visualProfiles = {
+      craft: { variant: "forest", size: 10, depth: 70 },
+      intangible: { variant: "heritage", size: 10, depth: 42 },
+      myth: { variant: "myth", size: 11, depth: 96 },
+      dunhuang: { variant: "desert", size: 12, depth: 122 },
+      cthulhu: { variant: "abyss", size: 10, depth: 86 },
+      qin: { variant: "imperial", size: 10, depth: 28 },
+      tang: { variant: "heritage", size: 11, depth: 58 },
+      fungi: { variant: "forest", size: 9, depth: -18 },
+      invention: { variant: "desert", size: 9, depth: 6 },
+      otherworld: { variant: "gateway", size: 11, depth: 112 }
+    };
+
+    const sceneState = {
+      targetYaw: 0.42,
+      targetPitch: -0.18,
+      currentYaw: 0.42,
+      currentPitch: -0.18,
+      idleYawSpeed: 0.0000012,
+      orbitDriftFactor: 0.018,
+      currentZoom: 1,
+      targetZoom: 1.12,
+      cameraOffsetX: 0,
+      cameraOffsetY: 0,
+      cameraOffsetZ: 0,
+      targetOffsetX: 0,
+      targetOffsetY: 0,
+      targetOffsetZ: 0,
+      frame: 0,
+      lastFrame: 0,
+      dragging: false,
+      pointerId: null,
+      lastX: 0,
+      lastY: 0,
+      lastMoveTime: 0,
+      velocityYaw: 0,
+      velocityPitch: 0
+    };
+
+    const clusterParticles = [];
+    const orbitalBands = [];
+    const sceneSystems = [];
+    const sceneMetrics = {
+      width: 0,
+      height: 0,
+      centerX: 0,
+      centerY: 0,
+      depth: 980,
+      radiusX: 320,
+      radiusY: 182
+    };
+
+    function getVisualProfile(system) {
+      return visualProfiles[system.id] || { variant: "myth", size: 10, depth: 40 };
+    }
 
     function gaussian() {
       let u = 0;
@@ -1347,87 +3015,396 @@
       return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
     }
 
-    function createDustParticle(x, y, size, opacity, className, color) {
-      if (x < 0 || x > 100 || y < 0 || y > 100) {
-        return;
-      }
-      const dot = document.createElement("span");
-      dot.className = `dust ${className}`;
-      dot.style.left = x + "%";
-      dot.style.top = y + "%";
-      dot.style.width = size + "px";
-      dot.style.height = size + "px";
-      dot.style.opacity = String(opacity);
-      dot.style.animationDelay = (Math.random() * 6).toFixed(2) + "s";
-      dot.style.setProperty("--dust-color", color);
-      dustLayer.appendChild(dot);
+    function updateSceneMetrics() {
+      const rect = clusterStage.getBoundingClientRect();
+      sceneMetrics.width = rect.width;
+      sceneMetrics.height = rect.height;
+      sceneMetrics.centerX = rect.width / 2;
+      sceneMetrics.centerY = rect.height / 2;
+      sceneMetrics.radiusX = rect.width * 0.34;
+      sceneMetrics.radiusY = rect.height * 0.23;
+      const ratio = window.devicePixelRatio || 1;
+      clusterCanvas.width = Math.max(1, Math.round(rect.width * ratio));
+      clusterCanvas.height = Math.max(1, Math.round(rect.height * ratio));
+      clusterCanvas.style.width = rect.width + "px";
+      clusterCanvas.style.height = rect.height + "px";
+      clusterContext.setTransform(ratio, 0, 0, ratio, 0, 0);
     }
 
-    function createDust() {
-      dustLayer.innerHTML = "";
+    function createParticlePoint(kind, armIndex) {
+      if (kind === "core") {
+        const radius = Math.pow(Math.random(), 0.58) * 82;
+        const angle = Math.random() * Math.PI * 2;
+        return {
+          x: Math.cos(angle) * radius * 0.95,
+          y: gaussian() * 18,
+          z: Math.sin(angle) * radius * 0.72 + gaussian() * 42,
+          sway: Math.random() * Math.PI * 2,
+          orbit: 0.0014 + Math.random() * 0.0024,
+          lift: 0.08 + Math.random() * 0.16,
+          roll: Math.random() * Math.PI * 2
+        };
+      }
 
-      const coreCount = 130;
-      const armCount = 340;
-      const farCount = 110;
-      const colors = ["rgba(138, 231, 255, 0.92)", "rgba(255, 208, 136, 0.88)", "rgba(209, 181, 255, 0.86)"];
+      if (kind === "arm") {
+        const radius = Math.pow(Math.random(), 0.72) * 270 + 42;
+        const spiral = radius * 0.028 + armIndex * ((Math.PI * 2) / 3) - 0.9 + gaussian() * 0.18;
+        return {
+          x: Math.cos(spiral) * radius * 1.06 + gaussian() * 18,
+          y: gaussian() * (10 + radius * 0.018),
+          z: Math.sin(spiral) * radius * 0.84 + gaussian() * 54,
+          sway: Math.random() * Math.PI * 2,
+          orbit: 0.0005 + Math.random() * 0.0012,
+          lift: 0.05 + Math.random() * 0.12,
+          roll: spiral
+        };
+      }
+
+      return {
+        x: gaussian() * 340,
+        y: gaussian() * 160,
+        z: -260 - Math.random() * 340,
+        sway: Math.random() * Math.PI * 2,
+        orbit: 0.00015 + Math.random() * 0.00035,
+        lift: 0.02 + Math.random() * 0.08,
+        roll: Math.random() * Math.PI * 2
+      };
+    }
+
+    function createOrbitalBand(index) {
+      return {
+        radiusX: sceneMetrics.radiusX * (0.46 + index * 0.18),
+        radiusZ: sceneMetrics.radiusX * (0.24 + index * 0.14),
+        y: (index - 1) * 22,
+        tilt: -0.48 + index * 0.36,
+        rotation: Math.random() * Math.PI * 2,
+        speed: 0.00008 + index * 0.00003,
+        color: ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.07)", "rgba(255, 255, 255, 0.05)"][index]
+      };
+    }
+
+    function systemToWorldPoint(system, profile) {
+      const x = ((system.x - 50) / 50) * sceneMetrics.radiusX;
+      const y = ((system.y - 50) / 50) * sceneMetrics.radiusY;
+      const z = profile.depth * 2.4 + Math.sin((system.x + system.y) * 0.08) * 26;
+      return {
+        x,
+        y,
+        z,
+        orbit: 0.0006 + (profile.depth + 40) / 180000,
+        lift: 0.04 + (profile.size - 9) * 0.015,
+        phase: (system.x + system.y) * 0.08
+      };
+    }
+
+    function projectPoint(point, yaw, pitch, zoom, time) {
+      const orbitAngle = point.orbit ? point.orbit * time * sceneState.orbitDriftFactor + (point.phase || 0) : 0;
+      const orbitX = point.x * Math.cos(orbitAngle) - point.z * Math.sin(orbitAngle);
+      const orbitZ = point.z * Math.cos(orbitAngle) + point.x * Math.sin(orbitAngle);
+      const orbitY = point.y + Math.sin(time * 0.0012 + (point.sway || point.phase || 0)) * (point.lift || 0) * 28;
+
+      const shiftedX = orbitX + sceneState.cameraOffsetX;
+      const shiftedY = orbitY + sceneState.cameraOffsetY;
+      const shiftedZ = orbitZ + sceneState.cameraOffsetZ;
+
+      const cosYaw = Math.cos(yaw);
+      const sinYaw = Math.sin(yaw);
+      const x1 = shiftedX * cosYaw - shiftedZ * sinYaw;
+      const z1 = shiftedZ * cosYaw + shiftedX * sinYaw;
+
+      const cosPitch = Math.cos(pitch);
+      const sinPitch = Math.sin(pitch);
+      const y2 = shiftedY * cosPitch - z1 * sinPitch;
+      const z2 = z1 * cosPitch + shiftedY * sinPitch;
+
+      const perspective = sceneMetrics.depth / (sceneMetrics.depth - z2);
+      return {
+        x: sceneMetrics.centerX + x1 * perspective * zoom,
+        y: sceneMetrics.centerY + y2 * perspective * zoom,
+        scale: perspective * zoom,
+        depth: z2
+      };
+    }
+
+    function createClusterParticle(className, color, size, opacity, point) {
+      clusterParticles.push({
+        point,
+        baseSize: size,
+        baseOpacity: opacity,
+        twinkle: Math.random() * Math.PI * 2,
+        tint: color,
+        kind: className,
+        streak: 0.8 + Math.random() * 2.4,
+        luminanceBias: Math.random() * 0.32,
+        softness: 0.42 + Math.random() * 0.22
+      });
+    }
+
+    function createClusterParticles() {
+      clusterParticles.length = 0;
+      orbitalBands.length = 0;
+
+      const coreCount = 230;
+      const armCount = 900;
+      const farCount = 290;
+      const colors = ["rgba(255, 255, 255, 0.68)", "rgba(255, 255, 255, 0.54)", "rgba(255, 255, 255, 0.42)"];
 
       for (let index = 0; index < coreCount; index += 1) {
-        const x = 50 + gaussian() * 6.4;
-        const y = 50 + gaussian() * 3.1;
-        const size = Math.random() * 3.8 + 1.1;
-        const opacity = 0.18 + Math.random() * 0.35;
-        createDustParticle(x, y, size, opacity, "core", colors[index % colors.length]);
+        const size = Math.random() * 2.1 + 0.9;
+        const opacity = 0.22 + Math.random() * 0.36;
+        createClusterParticle("core", colors[index % colors.length], size, opacity, createParticlePoint("core", index % 3));
       }
 
       for (let index = 0; index < armCount; index += 1) {
         const armIndex = index % 3;
-        const radius = Math.pow(Math.random(), 0.78) * 36 + 6;
-        const baseAngle = radius * 0.18 + armIndex * ((Math.PI * 2) / 3) - 0.75;
-        const angle = baseAngle + gaussian() * 0.22;
-        const x = 50 + Math.cos(angle) * radius * 1.02 + gaussian() * (1.1 + radius * 0.03);
-        const y = 50 + Math.sin(angle) * radius * 0.44 + gaussian() * (0.7 + radius * 0.02);
-        const size = Math.random() * 3 + 0.8;
-        const opacity = 0.08 + Math.random() * 0.24;
-        createDustParticle(x, y, size, opacity, "arm", colors[armIndex]);
+        const size = Math.random() * 1.65 + 0.55;
+        const opacity = 0.1 + Math.random() * 0.24;
+        createClusterParticle("arm", colors[armIndex], size, opacity, createParticlePoint("arm", armIndex));
       }
 
       for (let index = 0; index < farCount; index += 1) {
-        const x = Math.random() * 100;
-        const y = Math.random() * 100;
-        const size = Math.random() * 2 + 0.6;
-        const opacity = 0.04 + Math.random() * 0.14;
-        createDustParticle(x, y, size, opacity, "far", "rgba(176, 204, 255, 0.72)");
+        const size = Math.random() * 1.1 + 0.35;
+        const opacity = 0.04 + Math.random() * 0.08;
+        createClusterParticle("far", "rgba(255, 255, 255, 0.18)", size, opacity, createParticlePoint("far", 0));
+      }
+
+      for (let index = 0; index < 3; index += 1) {
+        orbitalBands.push(createOrbitalBand(index));
       }
     }
 
+    function getSignalForSystem(system) {
+      const score = appState.interactions.planetScores[system.id] || 0;
+      if (score >= 5) {
+        return "强";
+      }
+      if (score >= 2) {
+        return "中";
+      }
+      return system.signal;
+    }
+
+    function getRecommendedSystem() {
+      const scored = systems
+        .map((system) => {
+          let score = system.progress * 0.04 + system.exploredTimes * 0.3;
+          system.tags.forEach((tag) => {
+            score += (appState.interactions.tagScores[tag] || 0) * 2.2;
+          });
+          score += (appState.interactions.planetScores[system.id] || 0) * 1.6;
+          if (system.id === activeSystemId) {
+            score -= 99;
+          }
+          return { system, score };
+        })
+        .sort((left, right) => right.score - left.score);
+
+      return (scored[0] && scored[0].system) || systems[0];
+    }
+
     function renderQuickList() {
-      const list = [
-        { title: "敦煌飞天星球", note: "图像反馈强，适合做首页高亮", color: "#ffb48a" },
-        { title: "山海经异兽星球", note: "故事性强，适合持续点击", color: "#ff9dcc" },
-        { title: "克苏鲁潮汐星球", note: "负责情绪纵深和危险感", color: "#86e7ff" }
-      ];
+      const list = [...systems]
+        .sort((left, right) => right.exploredTimes - left.exploredTimes)
+        .slice(0, 3);
+
       quickList.innerHTML = list.map((item) => `
         <article class="quick-item">
           <span class="quick-dot" style="color:${item.color}; background:${item.color};"></span>
           <div class="quick-copy">
-            <strong>${item.title}</strong>
-            <span>${item.note}</span>
+            <strong>${item.status === "locked" ? item.unknownName : item.name}</strong>
+            <span>${item.subtitle}</span>
           </div>
-          <em>活跃</em>
+          <em>${item.exploredTimes} 次</em>
         </article>
       `).join("");
     }
 
+    function renderRecommendedPanel() {
+      const system = getRecommendedSystem();
+      recommendedTitle.textContent = system.status === "locked" ? system.unknownName : system.name;
+      recommendedCopy.textContent = `${system.subtitle} 当前更适合继续向这个方向探索，系统判断它与你最近的兴趣轨迹更接近。`;
+      recommendedAction.dataset.systemId = system.id;
+    }
+
+    function renderPreferencePanel() {
+      const model = buildPreferenceSummary();
+      preferenceHeadline.textContent = model.headline;
+      preferenceSummary.textContent = model.summary;
+      preferenceTags.innerHTML = model.tags.length > 0
+        ? model.tags.map((tag) => `<span class="preference-tag">${tag}</span>`).join("")
+        : '<span class="preference-tag">继续探索以生成偏好</span>';
+      preferenceBadge.textContent = appState.auth.loggedIn ? "本地档案" : "游客观察";
+    }
+
+    function renderRecentShardsPanel() {
+      const shards = [...appState.shards]
+        .sort((left, right) => new Date(right.savedAt) - new Date(left.savedAt))
+        .slice(0, 3);
+
+      if (shards.length === 0) {
+        recentShardsList.innerHTML = '<div class="shard-empty">还没有收藏任何碎片。完成一次探索后点击“收藏为星际碎片”，这里会开始沉淀你的个人知识资产。</div>';
+        return;
+      }
+
+      recentShardsList.innerHTML = shards.map((shard) => `
+        <article class="shard-item" data-shard-id="${shard.shardId}">
+          <strong>${shard.title}</strong>
+          <span>${shard.planetName} · ${formatTimeLabel(shard.savedAt)}</span>
+          <p>${shard.hook}</p>
+        </article>
+      `).join("");
+
+      recentShardsList.querySelectorAll(".shard-item").forEach((node) => {
+        node.addEventListener("click", () => {
+          openShardModal(node.dataset.shardId);
+        });
+      });
+    }
+
+    function renderAuthUI() {
+      authButton.textContent = appState.auth.loggedIn ? `${appState.auth.userName} · 已登录` : "游客体验";
+      authStateMeta.textContent = appState.auth.loggedIn ? "本地观测档案已启用" : "当前为游客体验";
+      authLead.textContent = appState.auth.loggedIn
+        ? "当前原型使用本地观测档案模拟登录态，用来保存探索进度、碎片收藏和偏好轨迹。"
+        : "你可以先以游客方式浏览银河，但探索进度、碎片收藏和偏好沉淀需要启用本地观测档案。";
+      authBodyCopy.textContent = appState.auth.loggedIn
+        ? `你已经以「${appState.auth.userName}」身份进入一期体验流程，可以直接探索、确认结果并收藏碎片。`
+        : "你现在处于游客状态，可以查看银河和打开探索卡，但确认探索结果、收藏碎片和偏好沉淀会提示先启用本地观测档案。";
+      loginActionButton.textContent = appState.auth.loggedIn ? "继续使用本地观测档案" : "启用本地观测档案";
+      logoutActionButton.textContent = appState.auth.loggedIn ? "切换到游客体验" : "保持游客体验";
+      routeStatusMeta.textContent = appState.auth.loggedIn ? "本地观测档案" : "游客观察模式";
+    }
+
+    function renderShardDetail(shard) {
+      if (!shard) {
+        shardDetailTitle.textContent = "还没有收藏任何碎片";
+        shardDetailMeta.textContent = "等待收藏";
+        shardDetailHook.textContent = "当你在探索弹层里点击“收藏为星际碎片”后，这里会开始记录来源星球、摘要和标签。";
+        shardDetailBody.textContent = "";
+        shardDetailFragments.innerHTML = "";
+        shardDetailTags.innerHTML = "";
+        shardReopenButton.disabled = true;
+        shardSourceButton.disabled = true;
+        return;
+      }
+
+      shardDetailTitle.textContent = shard.title;
+      shardDetailMeta.textContent = `${shard.planetName} · ${formatTimeLabel(shard.savedAt)}`;
+      shardDetailHook.textContent = shard.hook;
+      shardDetailBody.textContent = shard.body;
+      shardDetailFragments.innerHTML = shard.extraFragments.map((fragment) => `<li>${fragment}</li>`).join("");
+      shardDetailTags.innerHTML = shard.tags.map((tag) => `<span class="meta-tag">${tag}</span>`).join("");
+      shardReopenButton.disabled = false;
+      shardSourceButton.disabled = false;
+      shardReopenButton.dataset.contentId = shard.contentId;
+      shardSourceButton.dataset.systemId = shard.planetId;
+    }
+
+    function renderShardLibrary(selectedId = selectedShardId) {
+      const shards = [...appState.shards].sort((left, right) => new Date(right.savedAt) - new Date(left.savedAt));
+      shardCountMeta.textContent = `${shards.length} 条碎片`;
+      selectedShardId = selectedId || (shards[0] && shards[0].shardId) || null;
+
+      if (shards.length === 0) {
+        shardLibraryList.innerHTML = '<div class="shard-empty">碎片库还是空的。先去完成一次探索，再把真正想留下的那张卡收进来。</div>';
+        renderShardDetail(null);
+        return;
+      }
+
+      shardLibraryList.innerHTML = shards.map((shard) => `
+        <article class="library-item ${shard.shardId === selectedShardId ? "active" : ""}" data-shard-id="${shard.shardId}">
+          <strong>${shard.title}</strong>
+          <span>${shard.planetName} · ${formatTimeLabel(shard.savedAt)}</span>
+          <p>${shard.hook}</p>
+        </article>
+      `).join("");
+
+      shardLibraryList.querySelectorAll(".library-item").forEach((node) => {
+        node.addEventListener("click", () => {
+          selectedShardId = node.dataset.shardId;
+          renderShardLibrary(selectedShardId);
+        });
+      });
+
+      renderShardDetail(shards.find((shard) => shard.shardId === selectedShardId) || shards[0]);
+    }
+
+    function renderRouteSummary() {
+      const exploredPlanets = systems.filter((system) => system.exploredTimes > 0).length;
+      const topPlanets = getTopEntries(appState.interactions.planetScores, 3);
+      const topTags = getTopEntries(appState.interactions.tagScores, 3);
+      const preference = buildPreferenceSummary();
+
+      routeExploreTotal.textContent = String(appState.interactions.confirmCount);
+      routePlanetTotal.textContent = String(exploredPlanets);
+      routeShardTotal.textContent = String(appState.shards.length);
+      routeLastExplore.textContent = formatTimeLabel(appState.interactions.lastExploredAt);
+      routePreferenceSummary.textContent = preference.summary;
+      routeTopTags.innerHTML = topTags.length > 0
+        ? topTags.map(([tag]) => `<span class="preference-tag">${tag}</span>`).join("")
+        : '<span class="preference-tag">暂无稳定标签</span>';
+      routeTopPlanets.innerHTML = topPlanets.length > 0
+        ? topPlanets.map(([planetId, value]) => {
+          const system = getSystemById(planetId);
+          return `
+            <article class="route-item">
+              <strong>${system.name}</strong>
+              <span>偏好权重 ${value.toFixed(1)} · 探索 ${system.exploredTimes} 次</span>
+              <p>${system.subtitle}</p>
+            </article>
+          `;
+        }).join("")
+        : '<div class="shard-empty">继续探索后，这里会显示你最常靠近的星球。</div>';
+      routeRecentList.innerHTML = appState.interactions.recentExplores.length > 0
+        ? appState.interactions.recentExplores.map((entry) => {
+          const system = getSystemById(entry.systemId);
+          return `
+            <article class="library-item" data-content-id="${entry.contentId}">
+              <strong>${entry.title}</strong>
+              <span>${system.name} · ${formatTimeLabel(entry.savedAt)}</span>
+              <p>${entry.hook}</p>
+            </article>
+          `;
+        }).join("")
+        : '<div class="shard-empty">你最近的航迹还没有生成。先完成一次探索，航迹就会开始留下来。</div>';
+
+      routeRecentList.querySelectorAll(".library-item").forEach((node) => {
+        node.addEventListener("click", () => {
+          const card = getCardById(node.dataset.contentId);
+          if (!card) {
+            return;
+          }
+          const system = getSystemById(card.planetId);
+          setActive(system.id, true);
+          openModal(system, card.contentId);
+        });
+      });
+    }
+
+    function renderInsightPanels() {
+      renderQuickList();
+      renderRecommendedPanel();
+      renderPreferencePanel();
+      renderRecentShardsPanel();
+      renderShardLibrary(selectedShardId);
+      renderRouteSummary();
+      renderAuthUI();
+    }
+
     function renderSystems() {
       clusterGrid.innerHTML = "";
+      sceneSystems.length = 0;
       systems.forEach((system) => {
+        const profile = getVisualProfile(system);
         const button = document.createElement("button");
-        button.className = `system ${system.status}`;
+        button.className = `system ${system.status} planet-${profile.variant}`;
         button.dataset.id = system.id;
         button.setAttribute("aria-label", system.name);
-        button.style.left = system.x + "%";
-        button.style.top = system.y + "%";
         button.style.color = system.color;
+        button.style.setProperty("--planet-main", system.color);
+        button.style.setProperty("--planet-shadow", `color-mix(in srgb, ${system.color} 58%, transparent)`);
+        button.style.setProperty("--planet-size", profile.size + "px");
+        button.innerHTML = "<span class=\"planet-aura\"></span><span class=\"planet-ring\"></span><span class=\"planet-core\"></span>";
 
         button.addEventListener("mouseenter", (event) => {
           setActive(system.id, false);
@@ -1454,8 +3431,109 @@
         });
 
         clusterGrid.appendChild(button);
+        sceneSystems.push({
+          node: button,
+          system,
+          profile,
+          point: systemToWorldPoint(system, profile)
+        });
       });
       syncActiveButton();
+    }
+
+    function getThemePreviewStyle(theme) {
+      const previewVariables = {
+        "--preview-bg-0": theme.variables["--bg-0"],
+        "--preview-bg-1": theme.variables["--bg-1"],
+        "--preview-bg-end": theme.variables["--bg-end"],
+        "--preview-glow-a": theme.variables["--bg-glow-a"],
+        "--preview-glow-b": theme.variables["--bg-glow-b"],
+        "--preview-glow-c": theme.variables["--bg-glow-c"],
+        "--preview-grid": theme.variables["--grid-line"],
+        "--preview-panel-top": theme.variables["--panel-top"],
+        "--preview-panel-bottom": theme.variables["--panel-bottom"],
+        "--preview-stage-core": theme.variables["--stage-core"],
+        "--preview-stage-cyan": theme.variables["--stage-cyan"],
+        "--preview-stage-violet": theme.variables["--stage-violet"],
+        "--preview-stage-gold": theme.variables["--stage-gold"],
+        "--preview-brand-core": theme.variables["--brand-core"]
+      };
+
+      return Object.entries(previewVariables).map(([name, value]) => `${name}: ${value};`).join(" ");
+    }
+
+    function syncThemeCards() {
+      themeGrid.querySelectorAll(".theme-card").forEach((node) => {
+        const isActive = node.dataset.themeId === currentThemeId;
+        node.classList.toggle("active", isActive);
+        node.setAttribute("aria-pressed", isActive ? "true" : "false");
+        const label = node.querySelector(".theme-active-label");
+        if (label) {
+          label.textContent = isActive ? "当前应用" : "点击试用";
+        }
+      });
+    }
+
+    function applyTheme(themeId, announce = true) {
+      const theme = themes.find((item) => item.id === themeId) || themes[0];
+      currentThemeId = theme.id;
+      Object.entries(theme.variables).forEach(([name, value]) => {
+        document.documentElement.style.setProperty(name, value);
+      });
+      themeStatus.textContent = `当前方案：${theme.name}`;
+      syncThemeCards();
+      if (announce) {
+        pulseToast("已切换到「" + theme.name + "」");
+      }
+      return theme;
+    }
+
+    function getThemeProfileForSystem(system) {
+      return systemThemeProfiles[system.id] || {
+        themeId: defaultThemeId,
+        label: "默认主视觉"
+      };
+    }
+
+    function applySystemTheme(system, announce = true) {
+      const profile = getThemeProfileForSystem(system);
+      const theme = applyTheme(profile.themeId, false);
+      themeStatus.textContent = `当前方案：${theme.name} · ${system.name}`;
+      if (announce) {
+        pulseToast("已靠近「" + system.name + "」，场域切换为「" + theme.name + "」");
+      }
+      return { theme, profile };
+    }
+
+    function renderThemeCards() {
+      themeGrid.innerHTML = themes.map((theme) => `
+        <button class="theme-card" type="button" data-theme-id="${theme.id}" aria-pressed="false">
+          <div class="theme-card-preview" style="${getThemePreviewStyle(theme)}">
+            <span class="theme-card-orbit"></span>
+            <span class="theme-card-core"></span>
+            <span class="theme-card-panel"></span>
+          </div>
+          <div class="theme-card-meta">
+            <h4 class="theme-card-title">${theme.name}</h4>
+            <span class="theme-card-tag">${theme.tag}</span>
+          </div>
+          <p class="theme-card-copy">${theme.description}</p>
+          <div class="theme-card-meta">
+            <div class="theme-card-swatches">
+              ${theme.swatches.map((color) => `<span style="background:${color}"></span>`).join("")}
+            </div>
+            <span class="theme-active-label">点击试用</span>
+          </div>
+        </button>
+      `).join("");
+
+      themeGrid.querySelectorAll(".theme-card").forEach((node) => {
+        node.addEventListener("click", () => {
+          applyTheme(node.dataset.themeId);
+        });
+      });
+
+      syncThemeCards();
     }
 
     function showTooltip(system, target) {
@@ -1481,11 +3559,220 @@
 
     function setActive(id, emphasize) {
       activeSystemId = id;
+      const system = getActiveSystem();
       syncActiveButton();
       renderSelectedPanel();
       if (emphasize) {
-        pulseToast("已将当前视角切换到「" + getActiveSystem().name + "」");
+        incrementCounter(appState.interactions.clickedSystems, system.id, 1);
+        applySystemTheme(system, true);
+        runApproachAnimation(system);
+        persistAppState();
+        renderInsightPanels();
       }
+    }
+
+    function runApproachAnimation(system) {
+      const activeSceneSystem = sceneSystems.find((item) => item.system.id === system.id);
+      sceneState.targetZoom = system.status === "locked" ? 1.16 : 1.32;
+      if (activeSceneSystem) {
+        sceneState.targetOffsetX = -activeSceneSystem.point.x * 0.18;
+        sceneState.targetOffsetY = -activeSceneSystem.point.y * 0.1;
+        sceneState.targetOffsetZ = -activeSceneSystem.point.z * 0.08;
+      }
+      clusterStage.classList.add("zooming");
+      window.clearTimeout(runApproachAnimation.timer);
+      runApproachAnimation.timer = window.setTimeout(() => {
+        clusterStage.classList.remove("zooming");
+      }, 820);
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function bindSceneRotation() {
+      clusterStage.addEventListener("pointerdown", (event) => {
+        if (event.target.closest(".system")) {
+          return;
+        }
+        sceneState.dragging = true;
+        sceneState.pointerId = event.pointerId;
+        sceneState.lastX = event.clientX;
+        sceneState.lastY = event.clientY;
+        sceneState.lastMoveTime = event.timeStamp;
+        sceneState.velocityYaw = 0;
+        sceneState.velocityPitch = 0;
+        clusterStage.classList.add("dragging");
+        clusterStage.setPointerCapture(event.pointerId);
+      });
+
+      clusterStage.addEventListener("pointermove", (event) => {
+        if (sceneState.dragging && event.pointerId === sceneState.pointerId) {
+          const deltaX = event.clientX - sceneState.lastX;
+          const deltaY = event.clientY - sceneState.lastY;
+          const elapsed = Math.max(16, event.timeStamp - sceneState.lastMoveTime);
+          sceneState.velocityYaw = deltaX * 0.00016 * (16 / elapsed);
+          sceneState.velocityPitch = -deltaY * 0.00012 * (16 / elapsed);
+          sceneState.targetYaw = clamp(sceneState.targetYaw + deltaX * 0.0056, -1.25, 1.25);
+          sceneState.targetPitch = clamp(sceneState.targetPitch - deltaY * 0.0042, -0.72, 0.68);
+          sceneState.lastX = event.clientX;
+          sceneState.lastY = event.clientY;
+          sceneState.lastMoveTime = event.timeStamp;
+          return;
+        }
+      });
+
+      clusterStage.addEventListener("pointerup", (event) => {
+        if (sceneState.pointerId !== event.pointerId) {
+          return;
+        }
+        sceneState.dragging = false;
+        sceneState.pointerId = null;
+        clusterStage.classList.remove("dragging");
+      });
+
+      clusterStage.addEventListener("pointercancel", () => {
+        sceneState.dragging = false;
+        sceneState.pointerId = null;
+        clusterStage.classList.remove("dragging");
+      });
+    }
+
+    function drawProjectedGlow(x, y, radius, color, alpha) {
+      const gradient = clusterContext.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, color.replace(/0\.[0-9]+\)/, `${Math.min(alpha * 0.26, 0.18).toFixed(3)})`));
+      gradient.addColorStop(0.24, color.replace(/0\.[0-9]+\)/, `${(alpha * 0.035).toFixed(3)})`));
+      gradient.addColorStop(1, color.replace(/0\.[0-9]+\)/, "0)"));
+      clusterContext.fillStyle = gradient;
+      clusterContext.beginPath();
+      clusterContext.arc(x, y, radius, 0, Math.PI * 2);
+      clusterContext.fill();
+    }
+
+    function alphaColor(alpha) {
+      return `rgba(255, 255, 255, ${clamp(alpha, 0, 0.95).toFixed(3)})`;
+    }
+
+    function drawOrbitalBands(time) {
+      orbitalBands.forEach((band) => {
+        const points = [];
+        for (let step = 0; step <= 72; step += 1) {
+          const angle = (step / 72) * Math.PI * 2 + band.rotation + time * band.speed * sceneState.orbitDriftFactor;
+          const localX = Math.cos(angle) * band.radiusX;
+          const localZ = Math.sin(angle) * band.radiusZ;
+          const localY = Math.sin(angle + band.tilt) * 18 + band.y;
+          points.push(projectPoint({ x: localX, y: localY, z: localZ, orbit: 0, lift: 0 }, sceneState.currentYaw, sceneState.currentPitch, sceneState.currentZoom, time));
+        }
+
+        clusterContext.strokeStyle = band.color;
+        clusterContext.lineWidth = 0.8;
+        clusterContext.beginPath();
+        points.forEach((point, index) => {
+          if (index === 0) {
+            clusterContext.moveTo(point.x, point.y);
+          } else {
+            clusterContext.lineTo(point.x, point.y);
+          }
+        });
+        clusterContext.stroke();
+      });
+    }
+
+    function drawClusterCore(time) {
+      const projected = projectPoint({ x: 0, y: 0, z: 0, orbit: 0, lift: 0 }, sceneState.currentYaw, sceneState.currentPitch, sceneState.currentZoom, time);
+      const coreRadius = 54 * projected.scale;
+      const gradient = clusterContext.createRadialGradient(projected.x, projected.y, 0, projected.x, projected.y, coreRadius * 2.6);
+      gradient.addColorStop(0, "rgba(255, 255, 255, 0.44)");
+      gradient.addColorStop(0.12, "rgba(255, 255, 255, 0.24)");
+      gradient.addColorStop(0.34, "rgba(255, 255, 255, 0.11)");
+      gradient.addColorStop(0.58, "rgba(255, 255, 255, 0.045)");
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+      clusterContext.fillStyle = gradient;
+      clusterContext.beginPath();
+      clusterContext.arc(projected.x, projected.y, coreRadius * 2.6, 0, Math.PI * 2);
+      clusterContext.fill();
+    }
+
+    function animateScene(time) {
+      sceneState.frame = time;
+      const delta = sceneState.lastFrame ? Math.min(32, time - sceneState.lastFrame) : 16;
+      sceneState.lastFrame = time;
+
+      if (!sceneState.dragging) {
+        sceneState.targetYaw += sceneState.idleYawSpeed * delta;
+        sceneState.targetYaw = clamp(sceneState.targetYaw + sceneState.velocityYaw * delta, -1.25, 1.25);
+        sceneState.targetPitch = clamp(sceneState.targetPitch + sceneState.velocityPitch * delta, -0.72, 0.68);
+        sceneState.velocityYaw *= 0.96;
+        sceneState.velocityPitch *= 0.92;
+      }
+
+      const desiredYaw = sceneState.targetYaw;
+      const desiredPitch = sceneState.targetPitch;
+      sceneState.currentYaw += (desiredYaw - sceneState.currentYaw) * 0.08;
+      sceneState.currentPitch += (desiredPitch - sceneState.currentPitch) * 0.08;
+      sceneState.currentZoom += (sceneState.targetZoom - sceneState.currentZoom) * 0.07;
+      sceneState.cameraOffsetX += (sceneState.targetOffsetX - sceneState.cameraOffsetX) * 0.08;
+      sceneState.cameraOffsetY += (sceneState.targetOffsetY - sceneState.cameraOffsetY) * 0.08;
+      sceneState.cameraOffsetZ += (sceneState.targetOffsetZ - sceneState.cameraOffsetZ) * 0.08;
+
+      clusterContext.clearRect(0, 0, sceneMetrics.width, sceneMetrics.height);
+      drawClusterCore(time);
+      drawOrbitalBands(time);
+
+      const projectedParticles = clusterParticles.map((particle) => {
+        const projected = projectPoint(particle.point, sceneState.currentYaw, sceneState.currentPitch, sceneState.currentZoom, time);
+        return { particle, projected };
+      });
+
+      projectedParticles.sort((left, right) => left.projected.depth - right.projected.depth);
+      projectedParticles.forEach(({ particle, projected }) => {
+        const twinkle = 0.78 + Math.sin(time * 0.0022 + particle.twinkle) * 0.22;
+        const normalizedDepth = clamp((projected.depth + 420) / 1040, 0, 1);
+        const depthLight = 0.34 + normalizedDepth * 1.02;
+        const distanceToCore = Math.hypot(projected.x - sceneMetrics.centerX, projected.y - sceneMetrics.centerY);
+        const coreLight = clamp(1 - distanceToCore / (sceneMetrics.width * 0.42), 0, 1);
+        const kindLight = particle.kind === "core" ? 0.26 : particle.kind === "arm" ? 0.02 : -0.22;
+        const luminance = clamp(depthLight + coreLight * 0.38 + kindLight + particle.luminanceBias * 0.88, 0.16, 1.46);
+        const opacity = clamp(particle.baseOpacity * twinkle * (0.46 + projected.scale * 0.088) * luminance, 0.014, 0.78);
+        const radius = clamp(projected.scale * particle.baseSize, 0.16, particle.kind === "core" ? 3.6 : particle.kind === "arm" ? 2.15 : 1.2);
+        const trailX = projected.x - Math.cos(time * 0.0005 + particle.point.roll) * particle.streak * projected.scale * 0.42;
+        const trailY = projected.y - Math.sin(time * 0.0007 + particle.point.sway) * particle.streak * projected.scale * 0.18;
+
+        clusterContext.strokeStyle = alphaColor(opacity * (0.024 + normalizedDepth * 0.042));
+        clusterContext.lineWidth = Math.max(0.1, radius * 0.09);
+        clusterContext.beginPath();
+        clusterContext.moveTo(trailX, trailY);
+        clusterContext.lineTo(projected.x, projected.y);
+        clusterContext.stroke();
+
+        const fillRadius = radius * (0.82 + particle.softness * 0.22);
+        const fill = clusterContext.createRadialGradient(projected.x, projected.y, 0, projected.x, projected.y, fillRadius);
+        fill.addColorStop(0, alphaColor(opacity * (1.4 + coreLight * 0.18 + normalizedDepth * 0.18)));
+        fill.addColorStop(0.16, alphaColor(opacity * 0.92));
+        fill.addColorStop(0.34, alphaColor(opacity * 0.34));
+        fill.addColorStop(1, alphaColor(0));
+        clusterContext.fillStyle = fill;
+        clusterContext.beginPath();
+        clusterContext.arc(projected.x, projected.y, fillRadius, 0, Math.PI * 2);
+        clusterContext.fill();
+
+        drawProjectedGlow(projected.x, projected.y, radius * (0.34 + normalizedDepth * 0.11), particle.tint, opacity * 0.24);
+      });
+
+      sceneSystems.forEach((entry) => {
+        const projected = projectPoint(entry.point, sceneState.currentYaw, sceneState.currentPitch, sceneState.currentZoom, time);
+        const scale = clamp(projected.scale * (0.74 + entry.profile.size * 0.042), 0.55, 2.8);
+        const alpha = clamp(0.42 + projected.scale * 0.52, 0.26, 1);
+        const clampedX = clamp(projected.x - 17, 8, sceneMetrics.width - 42);
+        const clampedY = clamp(projected.y - 17, 8, sceneMetrics.height - 42);
+        entry.node.style.setProperty("--screen-x", clampedX.toFixed(2) + "px");
+        entry.node.style.setProperty("--screen-y", clampedY.toFixed(2) + "px");
+        entry.node.style.setProperty("--planet-scale", scale.toFixed(3));
+        entry.node.style.opacity = alpha.toFixed(3);
+        entry.node.style.zIndex = String(200 + Math.round(projected.depth));
+      });
+
+      requestAnimationFrame(animateScene);
     }
 
     function getActiveSystem() {
@@ -1505,30 +3792,147 @@
       statusBadge.textContent = statusText[system.status];
       metricTimes.textContent = String(system.exploredTimes);
       metricUnlock.textContent = system.progress >= 50 ? "已解锁" : "未解锁";
-      metricSignal.textContent = system.signal;
+      metricSignal.textContent = getSignalForSystem(system);
       progressText.textContent = system.progress + "%";
       progressFill.style.width = system.progress + "%";
       snapshotText.textContent = system.preview;
       tagList.innerHTML = system.tags.map((tag) => `<span class="tag">${tag}</span>`).join("");
     }
 
-    function openModal(system) {
+    function openModal(system, preferredContentId) {
+      closePaletteModal(false);
+      closeShardModal(false);
+      closeRouteModal(false);
+      closeAuthModal(false);
+      const card = getCardForSystem(system, preferredContentId);
+      if (!card) {
+        return;
+      }
+      currentExploration = {
+        systemId: system.id,
+        contentId: card.contentId
+      };
+      incrementCounter(appState.interactions.openedCards, card.contentId, 1);
+      persistAppState();
       modal.classList.add("open");
       modal.setAttribute("aria-hidden", "false");
-      modalTitle.textContent = system.status === "locked" ? system.unknownName : system.name;
-      modalHook.textContent = system.hook;
-      modalBody.textContent = system.body;
+      modalTitle.textContent = card.title;
+      modalHook.textContent = card.hook;
+      modalBody.textContent = card.body;
       modalMeta.innerHTML = [
         `<span>${statusText[system.status]}</span>`,
+        `<span>${system.status === "locked" ? system.unknownName : system.name}</span>`,
+        `<span>${card.civilization}</span>`,
+        `<span>${card.difficultyLevel} · ${Math.max(1, Math.round(card.readingTime / 60))} 分钟</span>`,
         `<span>探索值 ${system.progress}%</span>`,
         `<span>探索 ${system.exploredTimes} 次</span>`
       ].join("");
-      modalFragments.innerHTML = system.fragments.map((fragment) => `<li>${fragment}</li>`).join("");
+      modalFragments.innerHTML = card.extraFragments.map((fragment) => `<li>${fragment}</li>`).join("");
+      modalTags.innerHTML = [...card.topicTags, ...card.moodTags].slice(0, 5).map((tag) => `<span class="meta-tag">${tag}</span>`).join("");
+      document.getElementById("saveShard").textContent = isSavedShard(card.contentId) ? "已收藏到碎片库" : "收藏为星际碎片";
+      renderInsightPanels();
     }
 
     function closeModal() {
+      releaseModalFocus(modal);
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden", "true");
+    }
+
+    function openPaletteModal() {
+      closeShardModal(false);
+      closeRouteModal(false);
+      closeAuthModal(false);
+      closeModal();
+      paletteModal.classList.add("open");
+      paletteModal.setAttribute("aria-hidden", "false");
+      syncThemeCards();
+    }
+
+    function closePaletteModal(restoreFocus = true) {
+      releaseModalFocus(paletteModal);
+      paletteModal.classList.remove("open");
+      paletteModal.setAttribute("aria-hidden", "true");
+      if (restoreFocus) {
+        document.getElementById("paletteButton").blur();
+      }
+    }
+
+    function openShardModal(shardId) {
+      closeModal();
+      closePaletteModal(false);
+      closeRouteModal(false);
+      closeAuthModal(false);
+      selectedShardId = shardId || selectedShardId;
+      renderShardLibrary(selectedShardId);
+      shardModal.classList.add("open");
+      shardModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeShardModal(restoreFocus = true) {
+      releaseModalFocus(shardModal);
+      shardModal.classList.remove("open");
+      shardModal.setAttribute("aria-hidden", "true");
+      if (restoreFocus) {
+        document.getElementById("shardsButton").blur();
+      }
+    }
+
+    function openRouteModal() {
+      closeModal();
+      closePaletteModal(false);
+      closeShardModal(false);
+      closeAuthModal(false);
+      renderRouteSummary();
+      routeModal.classList.add("open");
+      routeModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeRouteModal(restoreFocus = true) {
+      releaseModalFocus(routeModal);
+      routeModal.classList.remove("open");
+      routeModal.setAttribute("aria-hidden", "true");
+      if (restoreFocus) {
+        document.getElementById("routeButton").blur();
+      }
+    }
+
+    function openAuthModal(reasonText) {
+      closeModal();
+      closePaletteModal(false);
+      closeShardModal(false);
+      closeRouteModal(false);
+      if (reasonText) {
+        authLead.textContent = reasonText;
+      }
+      renderAuthUI();
+      authModal.classList.add("open");
+      authModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeAuthModal(restoreFocus = true) {
+      releaseModalFocus(authModal);
+      authModal.classList.remove("open");
+      authModal.setAttribute("aria-hidden", "true");
+      renderAuthUI();
+      if (restoreFocus) {
+        authButton.blur();
+      }
+    }
+
+    function createShardRecord(system, card) {
+      return {
+        shardId: card.contentId,
+        contentId: card.contentId,
+        planetId: system.id,
+        planetName: system.name,
+        title: card.title,
+        hook: card.hook,
+        body: card.body,
+        extraFragments: card.extraFragments,
+        tags: [...card.topicTags, ...card.moodTags],
+        savedAt: new Date().toISOString()
+      };
     }
 
     function pulseToast(text) {
@@ -1552,28 +3956,182 @@
       }
     });
 
+    authButton.addEventListener("click", () => {
+      openAuthModal();
+    });
+    document.getElementById("shardsButton").addEventListener("click", () => {
+      openShardModal();
+    });
+    document.getElementById("routeButton").addEventListener("click", () => {
+      openRouteModal();
+    });
+    document.getElementById("paletteButton").addEventListener("click", openPaletteModal);
+    document.getElementById("closePaletteModal").addEventListener("click", () => {
+      closePaletteModal();
+    });
+    paletteModal.addEventListener("click", (event) => {
+      if (event.target === paletteModal) {
+        closePaletteModal();
+      }
+    });
+    document.getElementById("themeResetButton").addEventListener("click", () => {
+      applyTheme(defaultThemeId, false);
+      themeStatus.textContent = "当前方案：极夜冰海 · 默认主视觉";
+      pulseToast("已恢复默认主视觉「极夜冰海」");
+    });
+
+    document.getElementById("closeShardModal").addEventListener("click", () => {
+      closeShardModal();
+    });
+    shardModal.addEventListener("click", (event) => {
+      if (event.target === shardModal) {
+        closeShardModal();
+      }
+    });
+
+    document.getElementById("closeRouteModal").addEventListener("click", () => {
+      closeRouteModal();
+    });
+    routeModal.addEventListener("click", (event) => {
+      if (event.target === routeModal) {
+        closeRouteModal();
+      }
+    });
+
+    document.getElementById("closeAuthModal").addEventListener("click", () => {
+      closeAuthModal();
+    });
+    authModal.addEventListener("click", (event) => {
+      if (event.target === authModal) {
+        closeAuthModal();
+      }
+    });
+
+    loginActionButton.addEventListener("click", () => {
+      appState.auth.loggedIn = true;
+      appState.auth.userName = "观测员";
+      persistAppState();
+      renderInsightPanels();
+      closeAuthModal();
+      pulseToast("本地观测档案已启用");
+    });
+
+    logoutActionButton.addEventListener("click", () => {
+      if (!appState.auth.loggedIn) {
+        closeAuthModal();
+        return;
+      }
+      appState.auth.loggedIn = false;
+      appState.auth.userName = "游客";
+      persistAppState();
+      renderInsightPanels();
+      closeAuthModal();
+      pulseToast("已切换到游客体验");
+    });
+
+    recommendedAction.addEventListener("click", () => {
+      const system = getSystemById(recommendedAction.dataset.systemId);
+      setActive(system.id, true);
+      openModal(system);
+    });
+
+    shardReopenButton.addEventListener("click", () => {
+      const card = getCardById(shardReopenButton.dataset.contentId);
+      if (!card) {
+        return;
+      }
+      const system = getSystemById(card.planetId);
+      setActive(system.id, true);
+      openModal(system, card.contentId);
+    });
+
+    shardSourceButton.addEventListener("click", () => {
+      const system = getSystemById(shardSourceButton.dataset.systemId);
+      if (!system) {
+        return;
+      }
+      closeShardModal(false);
+      setActive(system.id, true);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+      if (paletteModal.classList.contains("open")) {
+        closePaletteModal();
+      }
+      if (shardModal.classList.contains("open")) {
+        closeShardModal();
+      }
+      if (routeModal.classList.contains("open")) {
+        closeRouteModal();
+      }
+      if (authModal.classList.contains("open")) {
+        closeAuthModal();
+      }
+      if (modal.classList.contains("open")) {
+        closeModal();
+      }
+    });
+
     document.getElementById("confirmExplore").addEventListener("click", () => {
+      if (!requireLogin("确认探索结果")) {
+        return;
+      }
       const system = getActiveSystem();
+      const card = currentExploration ? getCardById(currentExploration.contentId) : getCardForSystem(system);
+      if (!card) {
+        return;
+      }
       system.exploredTimes += 1;
-      system.progress = Math.min(system.progress + 8, 100);
+      system.progress = Math.min(system.progress + (card.difficultyLevel === "L3" ? 12 : card.difficultyLevel === "L2" ? 8 : 6), 100);
       if (system.progress >= 50) {
         system.status = "unlocked";
       } else if (system.exploredTimes > 0) {
         system.status = "explored";
       }
+      incrementCounter(appState.interactions.planetScores, system.id, 1.2);
+      registerPreference(card, 1.1);
+      trackRecentExplore(system, card);
+      appState.interactions.confirmCount += 1;
+      updateStoredSystem(system);
+      persistAppState();
       renderSystems();
       renderSelectedPanel();
-      openModal(system);
-      pulseToast("探索值已提升到 " + system.progress + "%");
+      renderInsightPanels();
+      openModal(system, card.contentId);
+      pulseToast(`探索值已提升到 ${system.progress}% · ${card.title}`);
     });
 
     document.getElementById("saveShard").addEventListener("click", () => {
+      if (!requireLogin("收藏碎片")) {
+        return;
+      }
+      const system = getActiveSystem();
+      const card = currentExploration ? getCardById(currentExploration.contentId) : getCardForSystem(system);
+      if (!card) {
+        return;
+      }
+      if (isSavedShard(card.contentId)) {
+        pulseToast("这条碎片已经在你的碎片库里");
+        openShardModal(card.contentId);
+        return;
+      }
+      const shard = createShardRecord(system, card);
+      appState.shards.unshift(shard);
+      registerPreference(card, 2.4);
+      appState.interactions.saveCount += 1;
+      selectedShardId = shard.shardId;
+      persistAppState();
+      renderInsightPanels();
+      document.getElementById("saveShard").textContent = "已收藏到碎片库";
       pulseToast("已收藏为星际碎片");
     });
 
     document.getElementById("nextExplore").addEventListener("click", () => {
       const next = randomSystem(true);
-      setActive(next.id, false);
+      setActive(next.id, true);
       openModal(next);
     });
 
@@ -1591,11 +4149,14 @@
         system.y = Math.max(14, Math.min(84, system.y + dy));
       });
       renderSystems();
+      renderInsightPanels();
       pulseToast("已切换一条新的银河航线");
     });
 
     document.getElementById("enterButton").addEventListener("click", () => {
-      openModal(getActiveSystem());
+      const system = getActiveSystem();
+      applySystemTheme(system, true);
+      openModal(system);
     });
 
     document.getElementById("resetButton").addEventListener("click", () => {
@@ -1606,10 +4167,12 @@
     const context = canvas.getContext("2d");
     const stars = [];
     const bandStars = [];
+    const nebulaClouds = [];
 
     function createStars(width, height) {
       stars.length = 0;
       bandStars.length = 0;
+      nebulaClouds.length = 0;
       const total = Math.max(180, Math.floor((width * height) / 9000));
       for (let index = 0; index < total; index += 1) {
         stars.push({
@@ -1635,6 +4198,19 @@
           color: ["rgba(139, 227, 255, 0.9)", "rgba(255, 223, 161, 0.82)", "rgba(214, 192, 255, 0.8)"][arm]
         });
       }
+
+      for (let index = 0; index < 4; index += 1) {
+        nebulaClouds.push({
+          x: width * (0.18 + index * 0.22),
+          y: height * (0.22 + (index % 2) * 0.24),
+          radius: Math.min(width, height) * (0.16 + Math.random() * 0.08),
+          alpha: 0.05 + Math.random() * 0.035,
+          driftX: (Math.random() - 0.5) * 42,
+          driftY: (Math.random() - 0.5) * 8,
+          phase: Math.random() * Math.PI * 2,
+          color: ["rgba(115, 202, 255, 0.18)", "rgba(255, 211, 148, 0.12)", "rgba(173, 153, 255, 0.12)", "rgba(144, 233, 215, 0.12)"][index]
+        });
+      }
     }
 
     function resizeCanvas() {
@@ -1649,10 +4225,25 @@
       createStars(width, height);
     }
 
-    function drawStarfield() {
+    function drawStarfield(time = 0) {
       const width = window.innerWidth;
       const height = window.innerHeight;
       context.clearRect(0, 0, width, height);
+
+      nebulaClouds.forEach((cloud) => {
+        const offsetX = Math.cos(time * 0.00008 + cloud.phase) * cloud.driftX;
+        const offsetY = Math.sin(time * 0.00006 + cloud.phase * 1.2) * cloud.driftY;
+        const radius = cloud.radius * (0.94 + Math.sin(time * 0.00012 + cloud.phase) * 0.06);
+        const glow = context.createRadialGradient(cloud.x + offsetX, cloud.y + offsetY, 0, cloud.x + offsetX, cloud.y + offsetY, radius);
+        glow.addColorStop(0, cloud.color.replace(/0\.[0-9]+\)/, `${cloud.alpha.toFixed(3)})`));
+        glow.addColorStop(0.45, cloud.color.replace(/0\.[0-9]+\)/, `${(cloud.alpha * 0.55).toFixed(3)})`));
+        glow.addColorStop(1, cloud.color.replace(/0\.[0-9]+\)/, "0)"));
+        context.fillStyle = glow;
+        context.beginPath();
+        context.arc(cloud.x + offsetX, cloud.y + offsetY, radius, 0, Math.PI * 2);
+        context.fill();
+      });
+
       const gradient = context.createRadialGradient(width * 0.48, height * 0.5, 0, width * 0.5, height * 0.5, width * 0.44);
       gradient.addColorStop(0, "rgba(148, 220, 255, 0.11)");
       gradient.addColorStop(0.28, "rgba(161, 133, 255, 0.08)");
@@ -1701,14 +4292,27 @@
       requestAnimationFrame(drawStarfield);
     }
 
+    syncSystemsFromState();
+    updateSceneMetrics();
     resizeCanvas();
-    renderQuickList();
-    createDust();
+    renderThemeCards();
+    applyTheme(defaultThemeId, false);
+    createClusterParticles();
     renderSystems();
     renderSelectedPanel();
+    renderInsightPanels();
+    bindSceneRotation();
+    runApproachAnimation(getActiveSystem());
+    animateScene(0);
     drawStarfield();
 
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("resize", () => {
+      updateSceneMetrics();
+      resizeCanvas();
+      createClusterParticles();
+      renderSystems();
+      runApproachAnimation(getActiveSystem());
+    });
   </script>
 </body>
 </html>
