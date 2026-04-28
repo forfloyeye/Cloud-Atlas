@@ -1,4 +1,4 @@
 window.CLOUD_ATLAS_SUPABASE_CONFIG = {
-  url: "",
-  anonKey: ""
+  url: "https://slxchzlcmdbausuplmlp.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNseGNoemxjbWRiYXVzdXBsbWxwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNjkxMzIsImV4cCI6MjA5Mjk0NTEzMn0.zlTEeTnfzjTd3nB3cdAoyD7jT05LtVfaVOuexisrLXE"
 };
