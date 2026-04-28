@@ -1607,6 +1607,59 @@
       line-height: 1.6;
     }
 
+    .auth-form-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .auth-field label {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .auth-field input {
+      width: 100%;
+      border: 1px solid rgba(164, 202, 255, 0.14);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      outline: none;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .auth-field input:focus {
+      border-color: rgba(186, 220, 255, 0.34);
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .auth-field input::placeholder {
+      color: rgba(219, 233, 255, 0.4);
+    }
+
+    .auth-status {
+      min-height: 20px;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .auth-status.error {
+      color: #ffb4b4;
+    }
+
+    .auth-status.success {
+      color: #9ce7cb;
+    }
+
     .secondary {
       background: rgba(255, 255, 255, 0.03);
     }
@@ -2370,12 +2423,28 @@
       </div>
       <div class="auth-card">
         <div class="auth-stack">
-          <p id="authBodyCopy">你已经以“观测员”身份进入一期体验流程，可以直接探索、确认结果并收藏碎片。</p>
-          <p class="inline-note">正式产品里，这里会对应登录、注册和游客切换；当前原型先用本地模式验证留存链路。</p>
+          <p id="authBodyCopy">登录后，探索进度、碎片收藏和偏好轨迹会写入真实用户数据。</p>
+          <div class="auth-form-grid">
+            <div class="auth-field">
+              <label for="authDisplayName">观测员名称</label>
+              <input id="authDisplayName" type="text" autocomplete="nickname" placeholder="例如：观测员 Atlas">
+            </div>
+            <div class="auth-field">
+              <label for="authEmail">邮箱</label>
+              <input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com">
+            </div>
+            <div class="auth-field">
+              <label for="authPassword">密码</label>
+              <input id="authPassword" type="password" autocomplete="current-password" placeholder="至少 6 位密码">
+            </div>
+          </div>
+          <p class="inline-note" id="authHelperNote">当前实现基于 Supabase Auth 与数据库。未配置 Supabase 时，登录注册按钮会被禁用。</p>
+          <div class="auth-status" id="authStatus"></div>
         </div>
         <div class="auth-actions">
-          <button class="primary" id="loginActionButton">启用本地观测档案</button>
-          <button class="ghost" id="logoutActionButton">切换到游客体验</button>
+          <button class="primary" id="loginActionButton">登录</button>
+          <button class="secondary" id="registerActionButton">注册</button>
+          <button class="ghost" id="logoutActionButton">退出登录</button>
         </div>
       </div>
     </div>
@@ -2383,7 +2452,10 @@
 
   <div class="toast" id="toast"></div>
 
-  <script>
+  <script src="./supabase-config.js"></script>
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
     const systems = [
       {
         id: "craft",
@@ -3126,7 +3198,13 @@
     const authStateMeta = document.getElementById("authStateMeta");
     const authLead = document.getElementById("authLead");
     const authBodyCopy = document.getElementById("authBodyCopy");
+    const authDisplayName = document.getElementById("authDisplayName");
+    const authEmail = document.getElementById("authEmail");
+    const authPassword = document.getElementById("authPassword");
+    const authHelperNote = document.getElementById("authHelperNote");
+    const authStatus = document.getElementById("authStatus");
     const loginActionButton = document.getElementById("loginActionButton");
+    const registerActionButton = document.getElementById("registerActionButton");
     const logoutActionButton = document.getElementById("logoutActionButton");
 
     let activeSystemId = systems[0].id;
@@ -3143,6 +3221,21 @@
     }, {});
 
     const storageKey = "cloud-atlas-demo-profile-v1";
+    const stateVersion = 2;
+    const supabaseConfig = window.CLOUD_ATLAS_SUPABASE_CONFIG || {};
+    const supabaseEnabled = Boolean(supabaseConfig.url && supabaseConfig.anonKey);
+    const supabase = supabaseEnabled
+      ? createClient(supabaseConfig.url, supabaseConfig.anonKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      })
+      : null;
+    let authSyncInFlight = false;
+    let remoteSyncTimer = null;
+    let authSubscription = null;
     const systemSeedState = systems.reduce((accumulator, system) => {
       accumulator[system.id] = {
         progress: system.progress,
@@ -3159,8 +3252,10 @@
     function createDefaultAppState() {
       return {
         auth: {
-          loggedIn: true,
-          userName: "观测员"
+          loggedIn: false,
+          userName: "游客",
+          userId: null,
+          email: null
         },
         systems: cloneData(systemSeedState),
         shards: [],
@@ -3173,69 +3268,231 @@
           lastExploredAt: null,
           confirmCount: 0,
           saveCount: 0
+        },
+        meta: {
+          stateVersion
+        }
+      };
+    }
+
+    function buildMergedState(saved, authOverride = null) {
+      const defaults = createDefaultAppState();
+      const mergedSystems = cloneData(systemSeedState);
+      Object.keys(mergedSystems).forEach((systemId) => {
+        if (saved.systems && saved.systems[systemId]) {
+          mergedSystems[systemId] = {
+            ...mergedSystems[systemId],
+            ...saved.systems[systemId]
+          };
+        }
+      });
+
+      return {
+        auth: authOverride || {
+          ...defaults.auth,
+          ...(saved.auth || {})
+        },
+        systems: mergedSystems,
+        shards: Array.isArray(saved.shards) ? saved.shards : [],
+        interactions: {
+          ...defaults.interactions,
+          ...(saved.interactions || {}),
+          clickedSystems: {
+            ...defaults.interactions.clickedSystems,
+            ...((saved.interactions && saved.interactions.clickedSystems) || {})
+          },
+          openedCards: {
+            ...defaults.interactions.openedCards,
+            ...((saved.interactions && saved.interactions.openedCards) || {})
+          },
+          tagScores: {
+            ...defaults.interactions.tagScores,
+            ...((saved.interactions && saved.interactions.tagScores) || {})
+          },
+          planetScores: {
+            ...defaults.interactions.planetScores,
+            ...((saved.interactions && saved.interactions.planetScores) || {})
+          },
+          recentExplores: Array.isArray(saved.interactions && saved.interactions.recentExplores) ? saved.interactions.recentExplores : [],
+          lastExploredAt: saved.interactions && saved.interactions.lastExploredAt ? saved.interactions.lastExploredAt : null
+        },
+        meta: {
+          ...defaults.meta,
+          ...(saved.meta || {})
         }
       };
     }
 
     function loadAppState() {
-      const defaults = createDefaultAppState();
-
       try {
         const raw = window.localStorage.getItem(storageKey);
         if (!raw) {
-          return defaults;
+          return createDefaultAppState();
         }
-
-        const saved = JSON.parse(raw);
-        const mergedSystems = cloneData(systemSeedState);
-        Object.keys(mergedSystems).forEach((systemId) => {
-          if (saved.systems && saved.systems[systemId]) {
-            mergedSystems[systemId] = {
-              ...mergedSystems[systemId],
-              ...saved.systems[systemId]
-            };
-          }
-        });
-
-        return {
-          auth: {
-            ...defaults.auth,
-            ...(saved.auth || {})
-          },
-          systems: mergedSystems,
-          shards: Array.isArray(saved.shards) ? saved.shards : [],
-          interactions: {
-            ...defaults.interactions,
-            ...(saved.interactions || {}),
-            clickedSystems: {
-              ...defaults.interactions.clickedSystems,
-              ...((saved.interactions && saved.interactions.clickedSystems) || {})
-            },
-            openedCards: {
-              ...defaults.interactions.openedCards,
-              ...((saved.interactions && saved.interactions.openedCards) || {})
-            },
-            tagScores: {
-              ...defaults.interactions.tagScores,
-              ...((saved.interactions && saved.interactions.tagScores) || {})
-            },
-            planetScores: {
-              ...defaults.interactions.planetScores,
-              ...((saved.interactions && saved.interactions.planetScores) || {})
-            },
-            recentExplores: Array.isArray(saved.interactions && saved.interactions.recentExplores) ? saved.interactions.recentExplores : [],
-            lastExploredAt: saved.interactions && saved.interactions.lastExploredAt ? saved.interactions.lastExploredAt : null
-          }
-        };
+        return buildMergedState(JSON.parse(raw));
       } catch (error) {
-        return defaults;
+        return createDefaultAppState();
       }
     }
 
     let appState = loadAppState();
 
-    function persistAppState() {
+    function persistLocalState() {
       window.localStorage.setItem(storageKey, JSON.stringify(appState));
+    }
+
+    function getRemoteStatePayload() {
+      return {
+        systems: appState.systems,
+        shards: appState.shards,
+        interactions: appState.interactions,
+        meta: {
+          stateVersion
+        }
+      };
+    }
+
+    function setAuthStatus(message = "", tone = "") {
+      authStatus.textContent = message;
+      authStatus.className = tone ? `auth-status ${tone}` : "auth-status";
+    }
+
+    async function saveRemoteState() {
+      if (!supabase || !appState.auth.loggedIn || !appState.auth.userId) {
+        return;
+      }
+
+      const payload = {
+        user_id: appState.auth.userId,
+        email: appState.auth.email,
+        display_name: appState.auth.userName,
+        app_state: getRemoteStatePayload()
+      };
+
+      const { error } = await supabase
+        .from("user_profiles")
+        .upsert(payload, { onConflict: "user_id" });
+
+      if (error) {
+        throw error;
+      }
+    }
+
+    function persistAppState() {
+      persistLocalState();
+      if (!supabase || !appState.auth.loggedIn || !appState.auth.userId) {
+        return;
+      }
+
+      window.clearTimeout(remoteSyncTimer);
+      remoteSyncTimer = window.setTimeout(() => {
+        saveRemoteState().catch((error) => {
+          console.error(error);
+          pulseToast("远端数据同步失败，请稍后重试");
+        });
+      }, 180);
+    }
+
+    async function loadRemoteStateForUser(user) {
+      if (!supabase) {
+        return null;
+      }
+
+      const { data, error } = await supabase
+        .from("user_profiles")
+        .select("display_name, app_state")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data) {
+        const bootstrapped = getRemoteStatePayload();
+        const { error: insertError } = await supabase
+          .from("user_profiles")
+          .upsert({
+            user_id: user.id,
+            email: user.email || null,
+            display_name: user.user_metadata && user.user_metadata.display_name ? user.user_metadata.display_name : appState.auth.userName,
+            app_state: bootstrapped
+          }, { onConflict: "user_id" });
+
+        if (insertError) {
+          throw insertError;
+        }
+
+        return bootstrapped;
+      }
+
+      return data.app_state || null;
+    }
+
+    async function applySession(session) {
+      if (authSyncInFlight) {
+        return;
+      }
+
+      authSyncInFlight = true;
+
+      try {
+        if (!session || !session.user) {
+          appState = buildMergedState({}, {
+            loggedIn: false,
+            userName: "游客",
+            userId: null,
+            email: null
+          });
+          syncSystemsFromState();
+          persistLocalState();
+          renderSystems();
+          renderSelectedPanel();
+          renderInsightPanels();
+          return;
+        }
+
+        const user = session.user;
+        const authModel = {
+          loggedIn: true,
+          userName: user.user_metadata && user.user_metadata.display_name ? user.user_metadata.display_name : (user.email ? user.email.split("@")[0] : "观测员"),
+          userId: user.id,
+          email: user.email || null
+        };
+
+        const remoteState = await loadRemoteStateForUser(user);
+        appState = buildMergedState(remoteState || getRemoteStatePayload(), authModel);
+        syncSystemsFromState();
+        persistLocalState();
+        renderSystems();
+        renderSelectedPanel();
+        renderInsightPanels();
+      } catch (error) {
+        console.error(error);
+        setAuthStatus(`账号同步失败：${error.message}`, "error");
+      } finally {
+        authSyncInFlight = false;
+      }
+    }
+
+    async function initializeSupabaseAuth() {
+      if (!supabase) {
+        setAuthStatus("尚未配置 Supabase。请先填写 demo/supabase-config.js。", "error");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        setAuthStatus(`读取会话失败：${error.message}`, "error");
+      }
+
+      await applySession(data ? data.session : null);
+      if (!authSubscription) {
+        const result = supabase.auth.onAuthStateChange((_event, session) => {
+          applySession(session);
+        });
+        authSubscription = result.data.subscription;
+      }
     }
 
     function syncSystemsFromState() {
@@ -3305,7 +3562,7 @@
       if (appState.auth.loggedIn) {
         return true;
       }
-      openAuthModal(`${actionLabel}需要先启用本地观测档案，这样探索进度、碎片收藏和偏好轨迹才能被记录下来。`);
+      openAuthModal(`${actionLabel}需要先登录账号，这样探索进度、碎片收藏和偏好轨迹才能写入真实用户数据。`);
       return false;
     }
 
@@ -3721,16 +3978,36 @@
 
     function renderAuthUI() {
       authButton.textContent = appState.auth.loggedIn ? `${appState.auth.userName} · 已登录` : "游客体验";
-      authStateMeta.textContent = appState.auth.loggedIn ? "本地观测档案已启用" : "当前为游客体验";
+      authStateMeta.textContent = appState.auth.loggedIn ? "Supabase 账号已连接" : "当前为游客体验";
       authLead.textContent = appState.auth.loggedIn
-        ? "当前原型使用本地观测档案模拟登录态，用来保存探索进度、碎片收藏和偏好轨迹。"
-        : "你可以先以游客方式浏览银河，但探索进度、碎片收藏和偏好沉淀需要启用本地观测档案。";
+        ? "当前探索进度、碎片收藏和偏好轨迹会同步到 Supabase 数据库。"
+        : "你可以先以游客方式浏览银河，但确认探索、收藏碎片和偏好沉淀需要登录账号。";
       authBodyCopy.textContent = appState.auth.loggedIn
-        ? `你已经以「${appState.auth.userName}」身份进入一期体验流程，可以直接探索、确认结果并收藏碎片。`
-        : "你现在处于游客状态，可以查看银河和打开探索卡，但确认探索结果、收藏碎片和偏好沉淀会提示先启用本地观测档案。";
-      loginActionButton.textContent = appState.auth.loggedIn ? "继续使用本地观测档案" : "启用本地观测档案";
-      logoutActionButton.textContent = appState.auth.loggedIn ? "切换到游客体验" : "保持游客体验";
-      routeStatusMeta.textContent = appState.auth.loggedIn ? "本地观测档案" : "游客观察模式";
+        ? `你已经以「${appState.auth.userName}」身份登录，后续探索会写入真实用户数据。`
+        : "你现在处于游客状态，可以查看银河和打开探索卡，但确认探索和收藏会提示先登录或注册。";
+      loginActionButton.textContent = appState.auth.loggedIn ? "已登录" : "登录";
+      registerActionButton.textContent = appState.auth.loggedIn ? "已注册" : "注册";
+      logoutActionButton.textContent = appState.auth.loggedIn ? "退出登录" : "继续游客浏览";
+      loginActionButton.disabled = appState.auth.loggedIn || !supabaseEnabled;
+      registerActionButton.disabled = appState.auth.loggedIn || !supabaseEnabled;
+      routeStatusMeta.textContent = appState.auth.loggedIn ? "云端观测档案" : "游客观察模式";
+      authDisplayName.disabled = appState.auth.loggedIn || !supabaseEnabled;
+      authEmail.disabled = appState.auth.loggedIn || !supabaseEnabled;
+      authPassword.disabled = appState.auth.loggedIn || !supabaseEnabled;
+      authDisplayName.value = appState.auth.loggedIn ? appState.auth.userName || "" : authDisplayName.value;
+      authEmail.value = appState.auth.loggedIn ? appState.auth.email || "" : authEmail.value;
+      authPassword.value = "";
+      authHelperNote.textContent = supabaseEnabled
+        ? "使用 Supabase Auth 的邮箱密码登录。注册成功后，探索进度与碎片会同步到数据库。"
+        : "尚未配置 Supabase，请先填写 demo/supabase-config.js 里的 url 和 anonKey。";
+    }
+
+    function readAuthForm() {
+      return {
+        displayName: authDisplayName.value.trim(),
+        email: authEmail.value.trim(),
+        password: authPassword.value
+      };
     }
 
     function renderShardDetail(shard) {
@@ -4376,10 +4653,11 @@
       closePaletteModal(false);
       closeShardModal(false);
       closeRouteModal(false);
+      renderAuthUI();
+      setAuthStatus("");
       if (reasonText) {
         authLead.textContent = reasonText;
       }
-      renderAuthUI();
       authModal.classList.add("open");
       authModal.setAttribute("aria-hidden", "false");
     }
@@ -4481,26 +4759,110 @@
       }
     });
 
-    loginActionButton.addEventListener("click", () => {
-      appState.auth.loggedIn = true;
-      appState.auth.userName = "观测员";
-      persistAppState();
+    loginActionButton.addEventListener("click", async () => {
+      if (!supabaseEnabled) {
+        setAuthStatus("请先配置 Supabase 连接信息。", "error");
+        return;
+      }
+      const { email, password } = readAuthForm();
+      if (!email || !password) {
+        setAuthStatus("请输入邮箱和密码。", "error");
+        return;
+      }
+
+      setAuthStatus("正在登录并同步云端档案...", "");
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        setAuthStatus(`登录失败：${error.message}`, "error");
+        return;
+      }
+
+      await applySession(data.session);
       renderInsightPanels();
       closeAuthModal();
-      pulseToast("本地观测档案已启用");
+      pulseToast("已登录并同步云端档案");
     });
 
-    logoutActionButton.addEventListener("click", () => {
+    registerActionButton.addEventListener("click", async () => {
+      if (!supabaseEnabled) {
+        setAuthStatus("请先配置 Supabase 连接信息。", "error");
+        return;
+      }
+
+      const { displayName, email, password } = readAuthForm();
+      if (!displayName || !email || !password) {
+        setAuthStatus("注册需要填写名称、邮箱和密码。", "error");
+        return;
+      }
+      if (password.length < 6) {
+        setAuthStatus("密码至少需要 6 位。", "error");
+        return;
+      }
+
+      setAuthStatus("正在创建账号...", "");
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            display_name: displayName
+          }
+        }
+      });
+
+      if (error) {
+        setAuthStatus(`注册失败：${error.message}`, "error");
+        return;
+      }
+
+      if (!data.session) {
+        setAuthStatus("注册成功，请先到邮箱完成确认后再登录。", "success");
+        return;
+      }
+
+      await applySession(data.session);
+      renderInsightPanels();
+      closeAuthModal();
+      pulseToast("注册成功，云端档案已创建");
+    });
+
+    logoutActionButton.addEventListener("click", async () => {
       if (!appState.auth.loggedIn) {
         closeAuthModal();
         return;
       }
-      appState.auth.loggedIn = false;
-      appState.auth.userName = "游客";
-      persistAppState();
-      renderInsightPanels();
+
+      if (!supabaseEnabled) {
+        appState = buildMergedState({}, {
+          loggedIn: false,
+          userName: "游客",
+          userId: null,
+          email: null
+        });
+        syncSystemsFromState();
+        persistLocalState();
+        renderSystems();
+        renderSelectedPanel();
+        renderInsightPanels();
+        closeAuthModal();
+        pulseToast("已切换到游客体验");
+        return;
+      }
+
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        setAuthStatus(`退出失败：${error.message}`, "error");
+        return;
+      }
+
       closeAuthModal();
-      pulseToast("已切换到游客体验");
+      pulseToast("已退出登录");
     });
 
     recommendedAction.addEventListener("click", () => {
@@ -4766,19 +5128,24 @@
       requestAnimationFrame(drawStarfield);
     }
 
-    syncSystemsFromState();
-    updateSceneMetrics();
-    resizeCanvas();
-    renderThemeCards();
-    applyTheme(defaultThemeId, false);
-    createClusterParticles();
-    renderSystems();
-    renderSelectedPanel();
-    renderInsightPanels();
-    bindSceneRotation();
-    runApproachAnimation(getActiveSystem());
-    animateScene(0);
-    drawStarfield();
+    async function initializeApp() {
+      syncSystemsFromState();
+      updateSceneMetrics();
+      resizeCanvas();
+      renderThemeCards();
+      applyTheme(defaultThemeId, false);
+      createClusterParticles();
+      await initializeSupabaseAuth();
+      renderSystems();
+      renderSelectedPanel();
+      renderInsightPanels();
+      bindSceneRotation();
+      runApproachAnimation(getActiveSystem());
+      animateScene(0);
+      drawStarfield();
+    }
+
+    initializeApp();
 
     window.addEventListener("resize", () => {
       updateSceneMetrics();
