@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>内容审核台 · 云图</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: #07111f;
+      color: #eef4ff;
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 17, 31, 0.96);
+      border-bottom: 1px solid rgba(170, 196, 255, 0.1);
+      backdrop-filter: blur(12px);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-logo { font-size: 17px; font-weight: 700; color: #86e7ff; letter-spacing: 0.05em; }
+    .header-sep { color: rgba(170, 196, 255, 0.3); }
+    .header-title { font-size: 14px; color: rgba(219, 233, 255, 0.7); }
+    .header-back {
+      margin-left: auto;
+      color: rgba(219, 233, 255, 0.55);
+      text-decoration: none;
+      font-size: 13px;
+      border: 1px solid rgba(170, 196, 255, 0.18);
+      border-radius: 6px;
+      padding: 5px 14px;
+      transition: all 0.2s;
+    }
+    .header-back:hover { color: #86e7ff; border-color: rgba(134, 231, 255, 0.4); }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: flex;
+      padding: 24px 32px 0;
+      gap: 0;
+    }
+    .stat-item {
+      background: rgba(11, 23, 48, 0.5);
+      border: 1px solid rgba(170, 196, 255, 0.1);
+      padding: 14px 28px;
+      min-width: 120px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      flex: 1;
+      max-width: 180px;
+    }
+    .stat-item:first-child { border-radius: 8px 0 0 8px; }
+    .stat-item:last-child { border-radius: 0 8px 8px 0; }
+    .stat-item + .stat-item { border-left: none; }
+    .stat-item:hover { background: rgba(20, 36, 70, 0.8); }
+    .stat-item.active { background: rgba(20, 36, 70, 0.95); border-color: rgba(134, 231, 255, 0.3); }
+    .stat-num { font-size: 28px; font-weight: 700; line-height: 1.2; }
+    .stat-num.all   { color: rgba(219, 233, 255, 0.9); }
+    .stat-num.draft { color: #f5c842; }
+    .stat-num.approved { color: #5ef585; }
+    .stat-num.live  { color: #86e7ff; }
+    .stat-label { font-size: 12px; color: rgba(219, 233, 255, 0.45); margin-top: 3px; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 16px 32px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-label { font-size: 12px; color: rgba(219, 233, 255, 0.4); flex-shrink: 0; }
+    .planet-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .planet-chip {
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(170, 196, 255, 0.15);
+      color: rgba(219, 233, 255, 0.6);
+      background: rgba(11, 23, 48, 0.4);
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .planet-chip:hover { border-color: rgba(134, 231, 255, 0.3); color: #eef4ff; }
+    .planet-chip.active { background: rgba(20, 36, 70, 0.9); border-color: rgba(134, 231, 255, 0.4); color: #86e7ff; }
+
+    /* ── Approval banner ── */
+    .approval-banner {
+      margin: 0 32px 14px;
+      background: rgba(94, 245, 133, 0.07);
+      border: 1px solid rgba(94, 245, 133, 0.2);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      color: rgba(94, 245, 133, 0.85);
+      display: none;
+    }
+    .approval-banner.visible { display: block; }
+
+    /* ── Card list ── */
+    .card-list {
+      padding: 0 32px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Review card ── */
+    .review-card {
+      background: rgba(11, 23, 48, 0.65);
+      border: 1px solid rgba(170, 196, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .review-card:hover { border-color: rgba(170, 196, 255, 0.2); }
+    .review-card.is-approved { border-left: 3px solid rgba(94, 245, 133, 0.4); }
+    .review-card.is-live { border-left: 3px solid rgba(134, 231, 255, 0.25); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 13px 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .card-header:hover .card-title-text { color: #a8d8ff; }
+
+    .planet-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(134, 231, 255, 0.1);
+      color: rgba(134, 231, 255, 0.85);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .status-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .status-badge.draft    { background: rgba(245, 200, 66, 0.12); color: #f5c842; }
+    .status-badge.approved { background: rgba(94, 245, 133, 0.12); color: #5ef585; }
+    .status-badge.live     { background: rgba(134, 231, 255, 0.1);  color: rgba(134, 231, 255, 0.8); }
+
+    .card-id { font-size: 11px; color: rgba(219, 233, 255, 0.28); font-family: 'Menlo', 'Courier New', monospace; flex-shrink: 0; }
+    .card-title-text { font-size: 14px; font-weight: 600; color: #d8e8ff; flex: 1; min-width: 0; transition: color 0.2s; }
+    .card-chevron { color: rgba(219, 233, 255, 0.35); font-size: 11px; flex-shrink: 0; transition: transform 0.25s; }
+    .review-card.expanded .card-chevron { transform: rotate(180deg); }
+
+    /* ── Card body (expanded) ── */
+    .card-body {
+      display: none;
+      padding: 0 20px 20px;
+      border-top: 1px solid rgba(170, 196, 255, 0.07);
+    }
+    .review-card.expanded .card-body { display: block; }
+
+    .card-hook {
+      font-size: 13.5px;
+      color: rgba(219, 233, 255, 0.85);
+      font-style: italic;
+      border-left: 3px solid rgba(134, 231, 255, 0.4);
+      padding: 10px 14px;
+      margin: 16px 0;
+      background: rgba(134, 231, 255, 0.05);
+      border-radius: 0 6px 6px 0;
+      line-height: 1.75;
+    }
+
+    .section-label {
+      font-size: 11px;
+      color: rgba(219, 233, 255, 0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 14px 0 8px;
+    }
+
+    .card-text {
+      font-size: 13.5px;
+      color: rgba(219, 233, 255, 0.75);
+      line-height: 1.9;
+    }
+    .card-text p + p { margin-top: 12px; }
+
+    .fragments { display: flex; flex-direction: column; gap: 7px; }
+    .fragment-item {
+      font-size: 13px;
+      color: rgba(219, 233, 255, 0.62);
+      background: rgba(134, 231, 255, 0.04);
+      border-left: 2px solid rgba(134, 231, 255, 0.2);
+      border-radius: 0 6px 6px 0;
+      padding: 8px 12px;
+      line-height: 1.65;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 14px;
+    }
+    .meta-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(20, 36, 70, 0.7);
+      color: rgba(219, 233, 255, 0.5);
+      border: 1px solid rgba(170, 196, 255, 0.1);
+    }
+
+    .source-note {
+      font-size: 12px;
+      color: rgba(245, 200, 66, 0.6);
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: rgba(245, 200, 66, 0.05);
+      border-left: 2px solid rgba(245, 200, 66, 0.3);
+      border-radius: 0 6px 6px 0;
+      line-height: 1.6;
+    }
+    .source-note::before { content: '⚠ 来源备注：'; font-weight: 600; }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(170, 196, 255, 0.08);
+    }
+    .btn {
+      font-size: 13px;
+      font-family: inherit;
+      padding: 7px 20px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .btn-approve {
+      background: rgba(94, 245, 133, 0.1);
+      border-color: rgba(94, 245, 133, 0.35);
+      color: #5ef585;
+    }
+    .btn-approve:hover { background: rgba(94, 245, 133, 0.2); }
+    .btn-revoke {
+      background: rgba(245, 100, 80, 0.08);
+      border-color: rgba(245, 100, 80, 0.3);
+      color: rgba(245, 140, 120, 0.9);
+    }
+    .btn-revoke:hover { background: rgba(245, 100, 80, 0.16); }
+    .btn-note {
+      background: transparent;
+      border-color: transparent;
+      color: rgba(219, 233, 255, 0.3);
+      cursor: default;
+      font-size: 12px;
+      padding-left: 0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 64px 32px;
+      color: rgba(219, 233, 255, 0.3);
+      font-size: 14px;
+    }
+    .empty-state strong { display: block; font-size: 32px; margin-bottom: 8px; opacity: 0.4; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <span class="header-logo">☁ 云图</span>
+    <span class="header-sep">/</span>
+    <span class="header-title">内容审核台</span>
+    <a href="./index.html" class="header-back">← 返回 Demo</a>
+  </header>
+
+  <div class="stats-bar" id="statsBar"></div>
+  <div class="filter-bar" id="filterBar"></div>
+  <div class="approval-banner" id="approvalBanner"></div>
+  <div class="card-list" id="cardList"></div>
+
+  <script type="module" src="./scripts/review.js"></script>
+</body>
+</html>

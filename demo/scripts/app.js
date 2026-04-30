@@ -375,7 +375,18 @@ let currentThemeId = defaultThemeId;
 let currentExploration = null;
 let selectedShardId = null;
 
-const cardsByPlanet = explorationCards.reduce((accumulator, card) => {
+// 审核过滤：published 卡直接显示；draft 卡需在审核台通过后才显示
+const REVIEW_APPROVAL_KEY = 'cloudAtlas_approvedIds';
+function _getReviewApprovedIds() {
+  try { return new Set(JSON.parse(localStorage.getItem(REVIEW_APPROVAL_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+const _reviewApprovedIds = _getReviewApprovedIds();
+const activeCards = explorationCards.filter(
+  card => card.status === 'published' || _reviewApprovedIds.has(card.contentId)
+);
+
+const cardsByPlanet = activeCards.reduce((accumulator, card) => {
   if (!accumulator[card.planetId]) {
     accumulator[card.planetId] = [];
   }
@@ -702,7 +713,7 @@ function getSystemById(systemId) {
 }
 
 function getCardById(contentId) {
-  return explorationCards.find((card) => card.contentId === contentId) || null;
+  return activeCards.find((card) => card.contentId === contentId) || null;
 }
 
 function getCardForSystem(system, preferredContentId) {
