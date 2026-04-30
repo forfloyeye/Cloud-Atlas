@@ -1433,7 +1433,7 @@
       shardDetailTitle.textContent = "还没有收藏任何碎片";
       shardDetailMeta.textContent = "等待收藏";
       shardDetailHook.textContent = "当你在探索弹层里点击“收藏为星际碎片”后，这里会开始记录来源星球、摘要和标签。";
-      shardDetailBody.textContent = "";
+      shardDetailBody.innerHTML = "";
       shardDetailFragments.innerHTML = "";
       shardDetailTags.innerHTML = "";
       shardReopenButton.disabled = true;
@@ -1444,7 +1444,7 @@
     shardDetailTitle.textContent = shard.title;
     shardDetailMeta.textContent = `${shard.planetName} · ${formatTimeLabel(shard.savedAt)}`;
     shardDetailHook.textContent = shard.hook;
-    shardDetailBody.textContent = shard.body;
+    shardDetailBody.innerHTML = shard.body.split("\n\n").map(function(p) { return "<p>" + p.replace(/\n/g, "<br>") + "</p>"; }).join("");
     shardDetailFragments.innerHTML = shard.extraFragments.map((fragment) => `<li>${fragment}</li>`).join("");
     shardDetailTags.innerHTML = shard.tags.map((tag) => `<span class="meta-tag">${tag}</span>`).join("");
     shardReopenButton.disabled = false;
@@ -1982,7 +1982,7 @@
       }
     })();
     modalHook.textContent = card.hook;
-    modalBody.textContent = card.body;
+    modalBody.innerHTML = card.body.split("\n\n").map(function(p) { return "<p>" + p.replace(/\n/g, "<br>") + "</p>"; }).join("");
     modalMeta.innerHTML = [
       `<span>${statusText[system.status]}</span>`,
       `<span>${system.status === "locked" ? system.unknownName : system.name}</span>`,
