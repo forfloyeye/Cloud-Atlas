@@ -1,0 +1,194 @@
+# 复制本模板后，按单个星球填写一整批首发内容。
+# 建议每个星球先补 6 张：L1 2 张、L2 3 张、L3 1 张。
+
+planetId: your-planet-id
+planetName: 你的星球名称
+civilization: 你的文明名称
+
+cards:
+  - contentId: your-planet-id-001
+    priority: P1
+    title: "这里填正式标题"
+    hook: "这里填 20-40 字的一句话引子"
+    body: |
+      这里填正文。
+      L1 建议 80-180 字，L2 建议 180-400 字，L3 建议 400-900 字。
+    extraFragments:
+      - "这里填延伸碎片 1"
+      - "这里填延伸碎片 2"
+    planetId: your-planet-id
+    planetName: 你的星球名称
+    civilization: 你的文明名称
+    difficultyLevel: L1
+    topicTags:
+      - 题材标签 1
+      - 题材标签 2
+    formatTags:
+      - 形式标签 1
+    moodTags:
+      - 情绪标签 1
+    eraTags: []
+    regionTags: []
+    characterTags: []
+    artifactTags: []
+    readingTime: 90
+    sourceNote: "这里填来源备注或资料方向"
+    status: draft
+    isFeatured: true
+    createdAt: 2026-04-30T00:00:00+08:00
+    updatedAt: 2026-04-30T00:00:00+08:00
+
+  - contentId: your-planet-id-002
+    priority: P1
+    title: "这里填正式标题"
+    hook: "这里填 20-40 字的一句话引子"
+    body: |
+      这里填正文。
+    extraFragments:
+      - "这里填延伸碎片 1"
+      - "这里填延伸碎片 2"
+    planetId: your-planet-id
+    planetName: 你的星球名称
+    civilization: 你的文明名称
+    difficultyLevel: L1
+    topicTags:
+      - 题材标签 1
+      - 题材标签 2
+    formatTags:
+      - 形式标签 1
+    moodTags:
+      - 情绪标签 1
+    eraTags: []
+    regionTags: []
+    characterTags: []
+    artifactTags: []
+    readingTime: 90
+    sourceNote: "这里填来源备注或资料方向"
+    status: draft
+    isFeatured: false
+    createdAt: 2026-04-30T00:00:00+08:00
+    updatedAt: 2026-04-30T00:00:00+08:00
+
+  - contentId: your-planet-id-003
+    priority: P1
+    title: "这里填正式标题"
+    hook: "这里填 20-40 字的一句话引子"
+    body: |
+      这里填正文。
+    extraFragments:
+      - "这里填延伸碎片 1"
+      - "这里填延伸碎片 2"
+    planetId: your-planet-id
+    planetName: 你的星球名称
+    civilization: 你的文明名称
+    difficultyLevel: L2
+    topicTags:
+      - 题材标签 1
+      - 题材标签 2
+    formatTags:
+      - 形式标签 1
+    moodTags:
+      - 情绪标签 1
+    eraTags: []
+    regionTags: []
+    characterTags: []
+    artifactTags: []
+    readingTime: 120
+    sourceNote: "这里填来源备注或资料方向"
+    status: draft
+    isFeatured: true
+    createdAt: 2026-04-30T00:00:00+08:00
+    updatedAt: 2026-04-30T00:00:00+08:00
+
+  - contentId: your-planet-id-004
+    priority: P2
+    title: "这里填正式标题"
+    hook: "这里填 20-40 字的一句话引子"
+    body: |
+      这里填正文。
+    extraFragments:
+      - "这里填延伸碎片 1"
+      - "这里填延伸碎片 2"
+    planetId: your-planet-id
+    planetName: 你的星球名称
+    civilization: 你的文明名称
+    difficultyLevel: L2
+    topicTags:
+      - 题材标签 1
+      - 题材标签 2
+    formatTags:
+      - 形式标签 1
+    moodTags:
+      - 情绪标签 1
+    eraTags: []
+    regionTags: []
+    characterTags: []
+    artifactTags: []
+    readingTime: 150
+    sourceNote: "这里填来源备注或资料方向"
+    status: draft
+    isFeatured: false
+    createdAt: 2026-04-30T00:00:00+08:00
+    updatedAt: 2026-04-30T00:00:00+08:00
+
+  - contentId: your-planet-id-005
+    priority: P2
+    title: "这里填正式标题"
+    hook: "这里填 20-40 字的一句话引子"
+    body: |
+      这里填正文。
+    extraFragments:
+      - "这里填延伸碎片 1"
+      - "这里填延伸碎片 2"
+    planetId: your-planet-id
+    planetName: 你的星球名称
+    civilization: 你的文明名称
+    difficultyLevel: L2
+    topicTags:
+      - 题材标签 1
+      - 题材标签 2
+    formatTags:
+      - 形式标签 1
+    moodTags:
+      - 情绪标签 1
+    eraTags: []
+    regionTags: []
+    characterTags: []
+    artifactTags: []
+    readingTime: 150
+    sourceNote: "这里填来源备注或资料方向"
+    status: draft
+    isFeatured: false
+    createdAt: 2026-04-30T00:00:00+08:00
+    updatedAt: 2026-04-30T00:00:00+08:00
+
+  - contentId: your-planet-id-006
+    priority: P3
+    title: "这里填正式标题"
+    hook: "这里填 20-40 字的一句话引子"
+    body: |
+      这里填正文。
+    extraFragments:
+      - "这里填延伸碎片 1"
+      - "这里填延伸碎片 2"
+    planetId: your-planet-id
+    planetName: 你的星球名称
+    civilization: 你的文明名称
+    difficultyLevel: L3
+    topicTags:
+      - 题材标签 1
+      - 题材标签 2
+    formatTags:
+      - 形式标签 1
+    moodTags:
+      - 情绪标签 1
+    eraTags: []
+    regionTags: []
+    characterTags: []
+    artifactTags: []
+    readingTime: 240
+    sourceNote: "这里填来源备注或资料方向"
+    status: draft
+    isFeatured: false
+    createdAt: 2026-04-30T00:00:00+08:00
+    updatedAt: 2026-04-30T00:00:00+08:00
