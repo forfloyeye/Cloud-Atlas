@@ -2115,6 +2115,35 @@
       border-color: rgba(164, 202, 255, 0.3);
       color: rgba(220, 235, 255, 0.88);
     }
+
+    /* ─── Custom Scrollbar ─── */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(134, 231, 255, 0.28) transparent;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(134, 231, 255, 0.22);
+      border-radius: 999px;
+      transition: background 200ms ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(134, 231, 255, 0.52);
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: transparent;
+    }
   </style>
 </head>
 
